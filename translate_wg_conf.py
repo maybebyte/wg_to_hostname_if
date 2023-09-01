@@ -58,12 +58,30 @@ class WGConfAccessor:
 
     def get_peer_endpoint(self):
         """
-        Retrieves the endpoint of the peer from the configuration file.
+        Retrieves the endpoint of the peer from the INI file.
 
         Returns:
             str: The endpoint of the peer.
         """
         return self.ini_parser.get(section="Peer", option="Endpoint")
+
+    def get_peer_endpoint_ip(self):
+        """
+        Retrieves the IP address of the peer endpoint from the INI file.
+
+        Returns:
+            str: The IP address of the peer endpoint.
+        """
+        return self.get_peer_endpoint().split(":")[0]
+
+    def get_peer_endpoint_port(self):
+        """
+        Retrieves the port number of the peer endpoint from the INI file.
+
+        Returns:
+            str: The port number of the peer endpoint.
+        """
+        return self.get_peer_endpoint().split(":")[1]
 
 
 try:
