@@ -52,13 +52,10 @@ class WGConfAccessor:
         return self.ini_parser.get(section="Peer", option="Endpoint")
 
 
-class WGConfValidator:
+class KeyValidator:
     """
-    Given a WireGuard INI file, validate its contents.
+    Validate public and private WireGuard keys.
     """
-
-    def __init__(self, file):
-        self.wg_conf_accessor = WGConfAccessor(file)
 
     def validate_key(self, key, key_name="Key"):
         """
@@ -76,16 +73,13 @@ class WGConfValidator:
         if len(b64decoded_key) != 32:
             raise ValueError(f"{key_name} didn't base64 decode to 32 bytes.")
 
-    def validate_keys(self):
+    def validate_keys(self, keys):
         """
-        Validate both the private and public WireGuard keys.
+        Validate all provided keys.
         See validate_key in the same class for more details.
         """
-        private_key = self.wg_conf_accessor.get_interface_private_key()
-        public_key = self.wg_conf_accessor.get_peer_public_key()
-
-        self.validate_key(private_key, key_name="PrivateKey")
-        self.validate_key(public_key, key_name="PublicKey")
+        for k in keys:
+            self.validate_key(k)
 
 
 class IPAddressFinder:
