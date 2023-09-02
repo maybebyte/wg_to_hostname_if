@@ -59,12 +59,10 @@ class IPAddressRetriever:
     def __init__(self, potential_addresses):
         self.potential_addresses = potential_addresses
 
-    def get_ipv4_addresses(self):
+    def find_ipv4_addresses(self):
         """
-        Returns a list of IPv4 addresses.
-
-        Returns:
-            list: A list of IPv4 addresses (in compressed format).
+        Searches a list for IPv4 addresses.
+        Returns a new list containing the IPv4 addresses it found.
         """
         ipv4_addresses = []
         for address in self.potential_addresses:
@@ -75,12 +73,10 @@ class IPAddressRetriever:
                 continue
         return ipv4_addresses
 
-    def get_ipv6_addresses(self):
+    def find_ipv6_addresses(self):
         """
-        Returns a list of IPv6 addresses.
-
-        Returns:
-            list: A list of IPv6 addresses (in compressed format).
+        Searches a list for IPv6 addresses.
+        Returns a new list containing the IPv6 addresses it found.
         """
         ipv6_addresses = []
         for address in self.potential_addresses:
