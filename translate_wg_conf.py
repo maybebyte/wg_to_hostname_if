@@ -83,7 +83,8 @@ class WGKeyValidator:
 
 
 # TODO: this actually uses ipaddress.ip_network, meaning that something
-# like this would be seen as a valid IP address even though it isn't actually:
+# like this would be seen as a valid IP address even though it isn't
+# actually:
 #
 # 192.168.1.0/24
 class IPAddressFinder:
@@ -160,7 +161,6 @@ wg_allowed_ips = wg_accessor.get_peer_allowed_ips().split(",")
 
 wg_if_addrs = wg_accessor.get_interface_address().split(",")
 wg_if_ip_finder = IPAddressFinder(wg_if_addrs)
-wg_if_ip_addrs = wg_if_ip_finder.find_ip_addresses()
 wg_if_ip4_addrs = wg_if_ip_finder.find_ipv4_addresses()
 wg_if_ip6_addrs = wg_if_ip_finder.find_ipv6_addresses()
 
@@ -180,6 +180,3 @@ for ip4_addr in wg_if_ip4_addrs:
 
 for ip6_addr in wg_if_ip6_addrs:
     print(f"inet6 {ip6_addr}")
-
-for ip_addr in wg_if_ip_addrs:
-    print(ip_addr)
