@@ -102,11 +102,8 @@ class IPAddressFinder:
         """
         ip_addresses = []
         for address in self.potential_addresses:
-            try:
-                ip = ipaddress.ip_network(address)
-                ip_addresses.append(ip.compressed)
-            except ipaddress.AddressValueError:
-                continue
+            ip = ipaddress.ip_network(address)
+            ip_addresses.append(ip.compressed)
         return ip_addresses
 
     def find_ipv4_addresses(self):
