@@ -126,3 +126,10 @@ except IndexError:
         f"{sys.argv[0]} needs a WireGuard configuration file.", file=sys.stderr
     )
     sys.exit(1)
+
+wg_accessor = WGConfAccessor(INI_FILE)
+
+wg_private_key = wg_accessor.get_interface_private_key()
+key_validator = KeyValidator()
+key_validator.validate_key(wg_private_key, key_name="PrivateKey")
+print(f"wgkey {wg_private_key}")
