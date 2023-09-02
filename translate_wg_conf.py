@@ -4,6 +4,7 @@
 # Translates it to hostname.if(5) format.
 
 import configparser
+import ipaddress
 import sys
 
 
@@ -31,10 +32,10 @@ class WGConfAccessor:
 
     def get_interface_address(self):
         """
-        Retrieves the address of the interface from the INI file.
+        Retrieves the interface address entry from the INI file.
 
         Returns:
-            str: The address of the interface.
+            str: The interface address entry.
         """
         return self.ini_parser.get(section="Interface", option="Address")
 
@@ -82,6 +83,47 @@ class WGConfAccessor:
             str: The port number of the peer endpoint.
         """
         return self.get_peer_endpoint().split(":")[1]
+
+
+class IPAddressRetriever:
+    """
+    Given a list, find IPv4/IPv6 addresses within that list.
+    """
+
+    def __init__(self, potential_addresses):
+        self.potential_addresses = potential_addresses
+
+    def get_ipv4_addresses(self):
+        """
+        Returns a list of IPv4 addresses.
+
+        Returns:
+            list: A list of IPv4 addresses (in compressed format).
+        """
+        ipv4_addresses = []
+        for address in self.potential_addresses:
+            try:
+                ip4 = ipaddress.IPv4Network(address)
+                ipv4_addresses.append(ip4.compressed)
+            except ipaddress.AddressValueError:
+                continue
+        return ipv4_addresses
+
+    def get_ipv6_addresses(self):
+        """
+        Returns a list of IPv6 addresses.
+
+        Returns:
+            list: A list of IPv6 addresses (in compressed format).
+        """
+        ipv6_addresses = []
+        for address in self.potential_addresses:
+            try:
+                ip6 = ipaddress.IPv6Network(address)
+                ipv6_addresses.append(ip6.compressed)
+            except ipaddress.AddressValueError:
+                continue
+        return ipv6_addresses
 
 
 try:
