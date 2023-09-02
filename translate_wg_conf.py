@@ -51,7 +51,7 @@ class WGConfAccessor:
         return self.ini_parser.get(section="Peer", option="Endpoint")
 
 
-class IPAddressRetriever:
+class IPAddressFinder:
     """
     Given a list, find IPv4/IPv6 addresses within that list.
     """
