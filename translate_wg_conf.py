@@ -94,45 +94,48 @@ class IPAddressFinder:
 
     def __init__(self, potential_addresses):
         self.potential_addresses = potential_addresses
+        self.ip_addresses = []
+        self.ipv4_addresses = []
+        self.ipv6_addresses = []
 
     def find_ip_addresses(self):
         """
         Searches a list for IP addresses.
         Returns a new list containing the addresses it found.
         """
-        ip_addresses = []
         for address in self.potential_addresses:
-            ip = ipaddress.ip_network(address)
-            ip_addresses.append(ip.compressed)
-        return ip_addresses
+            try:
+                ip = ipaddress.ip_network(address)
+                self.ip_addresses.append(ip.compressed)
+            except ipaddress.AddressValueError:
+                continue
+        return self.ip_addresses
 
     def find_ipv4_addresses(self):
         """
         Searches a list for IPv4 addresses.
         Returns a new list containing the IPv4 addresses it found.
         """
-        ipv4_addresses = []
         for address in self.potential_addresses:
             try:
                 ip4 = ipaddress.IPv4Network(address)
-                ipv4_addresses.append(ip4.compressed)
+                self.ipv4_addresses.append(ip4.compressed)
             except ipaddress.AddressValueError:
                 continue
-        return ipv4_addresses
+        return self.ipv4_addresses
 
     def find_ipv6_addresses(self):
         """
         Searches a list for IPv6 addresses.
         Returns a new list containing the IPv6 addresses it found.
         """
-        ipv6_addresses = []
         for address in self.potential_addresses:
             try:
                 ip6 = ipaddress.IPv6Network(address)
-                ipv6_addresses.append(ip6.compressed)
+                self.ipv6_addresses.append(ip6.compressed)
             except ipaddress.AddressValueError:
                 continue
-        return ipv6_addresses
+        return self.ipv6_addresses
 
 
 try:
