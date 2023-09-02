@@ -138,6 +138,13 @@ key_validator.validate_key(wg_public_key, key_name="PublicKey")
 
 wg_endpoint_ip, wg_endpoint_port = wg_accessor.get_peer_endpoint().split(":")
 
+wg_allowed_ips = wg_accessor.get_peer_allowed_ips().split(",")
+
 print(f"wgkey {wg_private_key}")
 print(f"wgpeer {wg_public_key} \\")
 print(f"\twgendpoint {wg_endpoint_ip} {wg_endpoint_port} \\")
+for allowed_ip in wg_allowed_ips:
+    if allowed_ip == wg_allowed_ips[-1]:
+        print(f"\twgaip {allowed_ip}")
+    else:
+        print(f"\twgaip {allowed_ip} \\")
