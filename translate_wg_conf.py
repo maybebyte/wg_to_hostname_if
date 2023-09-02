@@ -128,8 +128,12 @@ except IndexError:
     sys.exit(1)
 
 wg_accessor = WGConfAccessor(INI_FILE)
+key_validator = KeyValidator()
 
 wg_private_key = wg_accessor.get_interface_private_key()
-key_validator = KeyValidator()
 key_validator.validate_key(wg_private_key, key_name="PrivateKey")
 print(f"wgkey {wg_private_key}")
+
+wg_public_key = wg_accessor.get_peer_public_key()
+key_validator.validate_key(wg_public_key, key_name="PublicKey")
+print(f"wgpeer {wg_public_key} \\")
