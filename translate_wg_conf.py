@@ -18,7 +18,6 @@ class WGConfAccessor:
             ini_parser = configparser.ConfigParser()
             ini_parser.read_file(f)
 
-        self.file_handle = f
         self.ini_parser = ini_parser
 
     def get_interface_private_key(self):
