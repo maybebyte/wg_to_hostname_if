@@ -10,7 +10,7 @@ import sys
 
 class WGConfAccessor:
     """
-    Handles retrieving information from the provided WireGuard INI file.
+    Retrieves options from sections in the provided WireGuard INI file.
     """
 
     def __init__(self, file):
@@ -23,46 +23,31 @@ class WGConfAccessor:
 
     def get_interface_private_key(self):
         """
-        Retrieves the private key for the interface from the INI file.
-
-        Returns:
-            str: The private key for the interface.
+        Retrieves PrivateKey option from Interface section in the INI file.
         """
         return self.ini_parser.get(section="Interface", option="PrivateKey")
 
     def get_interface_address(self):
         """
-        Retrieves the interface address entry from the INI file.
-
-        Returns:
-            str: The interface address entry.
+        Retrieves Address option from Interface section in the INI file.
         """
         return self.ini_parser.get(section="Interface", option="Address")
 
     def get_peer_public_key(self):
         """
-        Retrieves the public key of the peer from the INI file.
-
-        Returns:
-            str: The public key of the peer.
+        Retrieves PublicKey option from Peer section in the INI file.
         """
         return self.ini_parser.get(section="Peer", option="PublicKey")
 
     def get_peer_allowed_ips(self):
         """
-        Retrieves the allowed IP addresses for the peer from the INI file.
-
-        Returns:
-            str: A string representing the allowed IP addresses for the peer.
+        Retrieves AllowedIPs option from Peer section in the INI file.
         """
         return self.ini_parser.get(section="Peer", option="AllowedIPs")
 
     def get_peer_endpoint(self):
         """
-        Retrieves the endpoint of the peer from the INI file.
-
-        Returns:
-            str: The endpoint of the peer.
+        Retrieves Endpoint option from Peer section in the INI file.
         """
         return self.ini_parser.get(section="Peer", option="Endpoint")
 
