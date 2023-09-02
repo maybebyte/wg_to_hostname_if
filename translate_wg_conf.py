@@ -140,6 +140,12 @@ wg_endpoint_ip, wg_endpoint_port = wg_accessor.get_peer_endpoint().split(":")
 
 wg_allowed_ips = wg_accessor.get_peer_allowed_ips().split(",")
 
+wg_if_addrs = wg_accessor.get_interface_address().split(",")
+wg_if_ip_finder = IPAddressFinder(wg_if_addrs)
+wg_if_ip4_addrs = wg_if_ip_finder.find_ipv4_addresses()
+wg_if_ip6_addrs = wg_if_ip_finder.find_ipv6_addresses()
+
+
 print(f"wgkey {wg_private_key}")
 print(f"wgpeer {wg_public_key} \\")
 print(f"\twgendpoint {wg_endpoint_ip} {wg_endpoint_port} \\")
@@ -149,3 +155,9 @@ for allowed_ip in wg_allowed_ips:
         print(f"\twgaip {allowed_ip}")
     else:
         print(f"\twgaip {allowed_ip} \\")
+
+for ip4_addr in wg_if_ip4_addrs:
+    print(f"inet {ip4_addr}")
+
+for ip6_addr in wg_if_ip6_addrs:
+    print(f"inet6 {ip6_addr}")
