@@ -52,7 +52,7 @@ class WGConfAccessor:
         return self.ini_parser.get(section="Peer", option="Endpoint")
 
 
-class KeyValidator:
+class WGKeyValidator:
     """
     Validate public and private WireGuard keys.
     """
@@ -128,7 +128,7 @@ except IndexError:
     sys.exit(1)
 
 wg_accessor = WGConfAccessor(INI_FILE)
-key_validator = KeyValidator()
+key_validator = WGKeyValidator()
 
 wg_private_key = wg_accessor.get_interface_private_key()
 key_validator.validate_key(wg_private_key, key_name="PrivateKey")
@@ -143,6 +143,7 @@ wg_allowed_ips = wg_accessor.get_peer_allowed_ips().split(",")
 print(f"wgkey {wg_private_key}")
 print(f"wgpeer {wg_public_key} \\")
 print(f"\twgendpoint {wg_endpoint_ip} {wg_endpoint_port} \\")
+
 for allowed_ip in wg_allowed_ips:
     if allowed_ip == wg_allowed_ips[-1]:
         print(f"\twgaip {allowed_ip}")
