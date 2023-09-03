@@ -22,6 +22,7 @@ def check_wg_key_validity(key, key_name="Key"):
     b64decoded_key = b64decode(bytes(key, "utf-8"), validate=True)
     if len(b64decoded_key) != 32:
         raise ValueError(f"{key_name} didn't base64 decode to 32 bytes.")
+    return True
 
 
 def find_ip_addresses(potential_addresses):
