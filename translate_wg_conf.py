@@ -132,9 +132,7 @@ wg_endpoint_ip, wg_endpoint_port = ini_parser.get(
     section="Peer", option="Endpoint"
 ).split(":")
 
-wg_allowed_ips = ini_parser.get(
-    section="Peer", option="AllowedIPs"
-).split(",")
+wg_allowed_ips = ini_parser.get(section="Peer", option="AllowedIPs").split(",")
 wg_aip_ip_finder = IPAddressFinder(wg_allowed_ips)
 wg_aip_ip_finder.find_ip_addresses()
 
