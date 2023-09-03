@@ -178,6 +178,8 @@ key_validator.validate_key(wg_public_key, key_name="PublicKey")
 wg_endpoint_ip, wg_endpoint_port = wg_accessor.get_peer_endpoint().split(":")
 
 wg_allowed_ips = wg_accessor.get_peer_allowed_ips().split(",")
+wg_aip_ip_finder = IPAddressFinder(wg_allowed_ips)
+wg_aip_ip_finder.find_ip_addresses()
 
 wg_if_addrs = wg_accessor.get_interface_address().split(",")
 wg_if_ip_finder = IPAddressFinder(wg_if_addrs)
@@ -188,7 +190,7 @@ print(f"wgkey {wg_private_key}")
 print(f"wgpeer {wg_public_key} \\")
 print(f"\twgendpoint {wg_endpoint_ip} {wg_endpoint_port} \\")
 
-for allowed_ip in wg_allowed_ips:
+for allowed_ip in wg_aip_ip_finder.ip_addresses:
     if allowed_ip == wg_allowed_ips[-1]:
         print(f"\twgaip {allowed_ip}")
     else:
