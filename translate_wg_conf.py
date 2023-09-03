@@ -9,27 +9,21 @@ import ipaddress
 import sys
 
 
-# TODO: move out of class into a regular function.
-class WGKeyValidator:
+def validate_key(key, key_name="Key"):
     """
-    Validate public and private WireGuard keys.
+    Validate the provided key.
+
+    Validation consists of these steps:
+    - base64 decode the key.
+    - check if its decoded length is 32 bytes.
+
+    If validation fails, raise an exception:
+    - If it failed during base64 decoding, see b64decode in base64.
+    - If it failed the length check, the exception is a ValueError.
     """
-
-    def validate_key(self, key, key_name="Key"):
-        """
-        Validate the provided key.
-
-        Validation consists of these steps:
-        - base64 decode the key.
-        - check if its decoded length is 32 bytes.
-
-        If validation fails, raise an exception:
-        - If it failed during base64 decoding, see b64decode in base64.
-        - If it failed the length check, the exception is a ValueError.
-        """
-        b64decoded_key = b64decode(bytes(key, "utf-8"), validate=True)
-        if len(b64decoded_key) != 32:
-            raise ValueError(f"{key_name} didn't base64 decode to 32 bytes.")
+    b64decoded_key = b64decode(bytes(key, "utf-8"), validate=True)
+    if len(b64decoded_key) != 32:
+        raise ValueError(f"{key_name} didn't base64 decode to 32 bytes.")
 
 
 class IPAddressFinder:
@@ -128,13 +122,11 @@ with open(file=INI_FILE, mode="r", encoding="utf-8") as f:
     ini_parser = configparser.ConfigParser()
     ini_parser.read_file(f)
 
-key_validator = WGKeyValidator()
-
 wg_private_key = ini_parser.get(section="Interface", option="PrivateKey")
-key_validator.validate_key(wg_private_key, key_name="PrivateKey")
+validate_key(wg_private_key, key_name="PrivateKey")
 
 wg_public_key = ini_parser.get(section="Peer", option="PublicKey")
-key_validator.validate_key(wg_public_key, key_name="PublicKey")
+validate_key(wg_public_key, key_name="PublicKey")
 
 wg_endpoint_ip, wg_endpoint_port = ini_parser.get(
     section="Peer", option="Endpoint"
