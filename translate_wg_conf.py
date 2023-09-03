@@ -9,49 +9,6 @@ import ipaddress
 import sys
 
 
-class WGConfAccessor:
-    """
-    Retrieves options from sections in the provided WireGuard INI file.
-    """
-
-    def __init__(self, file):
-        with open(file=file, mode="r", encoding="utf-8") as f:
-            ini_parser = configparser.ConfigParser()
-            ini_parser.read_file(f)
-
-        self.ini_parser = ini_parser
-
-    def get_interface_private_key(self):
-        """
-        Retrieves PrivateKey option from Interface section in the INI file.
-        """
-        return self.ini_parser.get(section="Interface", option="PrivateKey")
-
-    def get_interface_address(self):
-        """
-        Retrieves Address option from Interface section in the INI file.
-        """
-        return self.ini_parser.get(section="Interface", option="Address")
-
-    def get_peer_public_key(self):
-        """
-        Retrieves PublicKey option from Peer section in the INI file.
-        """
-        return self.ini_parser.get(section="Peer", option="PublicKey")
-
-    def get_peer_allowed_ips(self):
-        """
-        Retrieves AllowedIPs option from Peer section in the INI file.
-        """
-        return self.ini_parser.get(section="Peer", option="AllowedIPs")
-
-    def get_peer_endpoint(self):
-        """
-        Retrieves Endpoint option from Peer section in the INI file.
-        """
-        return self.ini_parser.get(section="Peer", option="Endpoint")
-
-
 class WGKeyValidator:
     """
     Validate public and private WireGuard keys.
@@ -166,22 +123,29 @@ except IndexError:
     )
     sys.exit(1)
 
-wg_accessor = WGConfAccessor(INI_FILE)
+with open(file=INI_FILE, mode="r", encoding="utf-8") as f:
+    ini_parser = configparser.ConfigParser()
+    ini_parser.read_file(f)
+
 key_validator = WGKeyValidator()
 
-wg_private_key = wg_accessor.get_interface_private_key()
+wg_private_key = ini_parser.get(section="Interface", option="PrivateKey")
 key_validator.validate_key(wg_private_key, key_name="PrivateKey")
 
-wg_public_key = wg_accessor.get_peer_public_key()
+wg_public_key = ini_parser.get(section="Peer", option="PublicKey")
 key_validator.validate_key(wg_public_key, key_name="PublicKey")
 
-wg_endpoint_ip, wg_endpoint_port = wg_accessor.get_peer_endpoint().split(":")
+wg_endpoint_ip, wg_endpoint_port = ini_parser.get(
+    section="Peer", option="Endpoint"
+).split(":")
 
-wg_allowed_ips = wg_accessor.get_peer_allowed_ips().split(",")
+wg_allowed_ips = ini_parser.get(
+    section="Peer", option="AllowedIPs"
+).split(",")
 wg_aip_ip_finder = IPAddressFinder(wg_allowed_ips)
 wg_aip_ip_finder.find_ip_addresses()
 
-wg_if_addrs = wg_accessor.get_interface_address().split(",")
+wg_if_addrs = ini_parser.get(section="Interface", option="Address").split(",")
 wg_if_ip_finder = IPAddressFinder(wg_if_addrs)
 wg_if_ip_finder.find_ip_addresses()
 
