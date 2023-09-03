@@ -71,11 +71,11 @@ with open(file=INI_FILE, mode="r", encoding="utf-8") as f:
     ini_parser.read_file(f)
 
 wg_config_data = {
-    "private_key": ini_parser.get(section="Interface", option="PrivateKey"),
-    "public_key": ini_parser.get(section="Peer", option="PublicKey"),
-    "endpoint": ini_parser.get(section="Peer", option="Endpoint"),
-    "allowed_ips": ini_parser.get(section="Peer", option="AllowedIPs"),
     "address": ini_parser.get(section="Interface", option="Address"),
+    "private_key": ini_parser.get(section="Interface", option="PrivateKey"),
+    "allowed_ips": ini_parser.get(section="Peer", option="AllowedIPs"),
+    "endpoint": ini_parser.get(section="Peer", option="Endpoint"),
+    "public_key": ini_parser.get(section="Peer", option="PublicKey"),
 }
 
 check_wg_key_validity(wg_config_data["private_key"], key_name="PrivateKey")
