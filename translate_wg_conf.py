@@ -73,14 +73,6 @@ class WGKeyValidator:
         if len(b64decoded_key) != 32:
             raise ValueError(f"{key_name} didn't base64 decode to 32 bytes.")
 
-    def validate_keys(self, keys):
-        """
-        Validate all provided keys.
-        See validate_key in the same class for more details.
-        """
-        for k in keys:
-            self.validate_key(k)
-
 
 class IPAddressFinder:
     """
