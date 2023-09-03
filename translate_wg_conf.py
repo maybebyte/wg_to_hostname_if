@@ -31,6 +31,25 @@ def to_bytes(bytes_or_str):
     return value
 
 
+def get_wg_endpoint_and_port(endpoint_entry):
+    """
+    Given the contents of a WireGuard Endpoint entry, return the IP and
+    port.
+    """
+    endpoint_entry_as_str = to_str(endpoint_entry)
+    endpoint_ip, endpoint_port = endpoint_entry_as_str.split(":")
+
+    validated_ip = ipaddress.ip_interface(endpoint_ip)
+    endpoint_port = int(endpoint_port)
+
+    if endpoint_port < 0 or endpoint_port > 65535:
+        raise ValueError(f"{endpoint_port} is not a valid port number.")
+
+    validated_port = endpoint_port
+
+    return validated_ip, validated_port
+
+
 def check_wg_key_validity(key, key_name="Key"):
     """
     Validate the provided WireGuard key.
@@ -103,7 +122,9 @@ wg_config_data = {
 check_wg_key_validity(wg_config_data["private_key"], key_name="PrivateKey")
 check_wg_key_validity(wg_config_data["public_key"], key_name="PublicKey")
 
-wg_endpoint_ip, wg_endpoint_port = wg_config_data["endpoint"].split(":")
+wg_endpoint_ip, wg_endpoint_port = get_wg_endpoint_and_port(
+    wg_config_data["endpoint"]
+)
 
 wg_allowed_ips = find_ip_addresses(wg_config_data["allowed_ips"].split(","))
 wg_if_addresses = find_ip_addresses(wg_config_data["address"].split(","))
