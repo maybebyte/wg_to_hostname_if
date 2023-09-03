@@ -37,73 +37,23 @@ class IPAddressFinder:
         self.ipv4_addresses = []
         self.ipv6_addresses = []
 
-    def _is_ip(self, ip):
-        """
-        Check if the given input is a valid IP address.
-
-        Parameters:
-        ip (str): The input string to be checked.
-
-        Returns:
-        - ipaddress.IPv4Interface or ipaddress.IPv6Interface, if ip
-          is a valid IP address.
-        - False if it isn't.
-        """
-
-        try:
-            _ip = ipaddress.ip_interface(ip)
-        except ipaddress.AddressValueError:
-            return False
-        return _ip
-
-    def _is_ipv4(self, ip):
-        """
-        Check if the given input is a valid IPv4 address.
-
-        Parameters:
-        ip (str): The input string to be checked.
-
-        Returns:
-        - ipaddress.IPv4Interface if ip is a valid IPv4 address.
-        - False if it isn't.
-        """
-
-        try:
-            _ip4 = ipaddress.IPv4Interface(ip)
-        except ipaddress.AddressValueError:
-            return False
-        return _ip4
-
-    def _is_ipv6(self, ip):
-        """
-        Check if the given input is a valid IPv6 address.
-
-        Parameters:
-        ip (str): The input string to be checked.
-
-        Returns:
-        - ipaddress.IPv6Interface if ip is a valid IPv6 address.
-        - False if it isn't.
-        """
-        try:
-            _ip6 = ipaddress.IPv6Interface(ip)
-        except ipaddress.AddressValueError:
-            return False
-        return _ip6
-
     def find_ip_addresses(self):
         """
         Searches a list for IP addresses.
         Returns a new list containing the addresses it found.
         """
         for address in self.potential_addresses:
-            if self._is_ip(address):
-                self.ip_addresses.append(address)
+            try:
+                _ip = ipaddress.ip_interface(address)
+            except ipaddress.AddressValueError:
+                continue
 
-            if self._is_ipv4(address):
-                self.ipv4_addresses.append(address)
-            elif self._is_ipv6(address):
-                self.ipv6_addresses.append(address)
+            if _ip.version == 4:
+                self.ipv4_addresses.append(_ip.with_prefixlen)
+            elif _ip.version == 6:
+                self.ipv6_addresses.append(_ip.with_prefixlen)
+
+            self.ip_addresses.append(_ip.with_prefixlen)
 
         return self.ip_addresses
 
