@@ -134,8 +134,8 @@ print("wgkey " + wg_config_data["private_key"])
 print("wgpeer " + wg_config_data["public_key"] + " \\")
 print("\t" + f"wgendpoint {wg_endpoint_ip} {wg_endpoint_port} \\")
 
-for allowed_ip in wg_allowed_ips["ip"]:
-    if allowed_ip == wg_allowed_ips["ip"][-1]:
+for i, allowed_ip in enumerate(wg_allowed_ips["ip"]):
+    if i == len(wg_allowed_ips["ip"]):
         print("\t" + f"wgaip {allowed_ip}")
     else:
         print("\t" + f"wgaip {allowed_ip} \\")
