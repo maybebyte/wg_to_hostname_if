@@ -88,13 +88,13 @@ wg_if_addresses = find_ip_addresses(wg_config_data["address"].split(","))
 
 print("wgkey " + wg_config_data["private_key"])
 print("wgpeer " + wg_config_data["public_key"] + " \\")
-print("\t" + "wgendpoint " + wg_endpoint_ip + " " + wg_endpoint_port + " \\")
+print("\t" + f"wgendpoint {wg_endpoint_ip} {wg_endpoint_port} \\")
 
 for allowed_ip in wg_allowed_ips["ip"]:
     if allowed_ip == wg_allowed_ips["ip"][-1]:
-        print(f"\twgaip {allowed_ip}")
+        print("\t" + f"wgaip {allowed_ip}")
     else:
-        print(f"\twgaip {allowed_ip} \\")
+        print("\t" + f"wgaip {allowed_ip} \\")
 
 for ip4_addr in wg_if_addresses["ip4"]:
     print(f"inet {ip4_addr}")
