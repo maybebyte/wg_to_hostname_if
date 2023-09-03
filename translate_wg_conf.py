@@ -99,8 +99,6 @@ class IPAddressFinder:
         for address in self.potential_addresses:
             if self._is_ip(address):
                 self.ip_addresses.append(address)
-            else:
-                continue
 
             if self._is_ipv4(address):
                 self.ipv4_addresses.append(address)
