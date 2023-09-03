@@ -67,6 +67,7 @@ with open(file=INI_FILE, mode="r", encoding="utf-8") as f:
     ini_parser = configparser.ConfigParser()
     ini_parser.read_file(f)
 
+
 wg_config_data = {
     "address": ini_parser.get(section="Interface", option="Address"),
     "private_key": ini_parser.get(section="Interface", option="PrivateKey"),
