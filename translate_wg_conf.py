@@ -31,7 +31,7 @@ def to_bytes(bytes_or_str):
     return value
 
 
-def get_wg_endpoint_and_port(endpoint_entry):
+def validate_and_extract_wg_endpoint(endpoint_entry):
     """
     Given the contents of a WireGuard Endpoint entry, return the IP and
     port.
@@ -47,7 +47,7 @@ def get_wg_endpoint_and_port(endpoint_entry):
 
     validated_port = endpoint_port
 
-    return validated_ip, validated_port
+    return validated_ip.with_prefixlen, validated_port
 
 
 def check_wg_key_validity(key, key_name="Key"):
@@ -122,7 +122,7 @@ wg_config_data = {
 check_wg_key_validity(wg_config_data["private_key"], key_name="PrivateKey")
 check_wg_key_validity(wg_config_data["public_key"], key_name="PublicKey")
 
-wg_endpoint_ip, wg_endpoint_port = get_wg_endpoint_and_port(
+wg_endpoint_ip, wg_endpoint_port = validate_and_extract_wg_endpoint(
     wg_config_data["endpoint"]
 )
 
