@@ -11,15 +11,13 @@ import sys
 
 def check_wg_key_validity(key, key_name="Key"):
     """
-    Validate the provided key.
+    Validate the provided WireGuard key.
 
     Validation consists of these steps:
     - base64 decode the key.
     - check if its decoded length is 32 bytes.
 
-    If validation fails, raise an exception:
-    - If it failed during base64 decoding, see b64decode in base64.
-    - If it failed the length check, the exception is a ValueError.
+    Raises a ValueError if the length check fails.
     """
     b64decoded_key = b64decode(bytes(key, "utf-8"), validate=True)
     if len(b64decoded_key) != 32:
@@ -29,8 +27,8 @@ def check_wg_key_validity(key, key_name="Key"):
 def find_ip_addresses(potential_addresses):
     """
     Searches a list for IP addresses.
-    Returns a dictionary with these entries:
 
+    Returns a dictionary with these entries:
     "ip": list of IP addresses
     "ip4": list of IPv4 addresses
     "ip6": list of IPv6 addresses
