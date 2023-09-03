@@ -26,36 +26,35 @@ def check_wg_key_validity(key, key_name="Key"):
         raise ValueError(f"{key_name} didn't base64 decode to 32 bytes.")
 
 
-class IPAddressFinder:
+def find_ip_addresses(potential_addresses):
     """
-    Given a list, find IPv4/IPv6 addresses within that list.
+    Searches a list for IP addresses.
+    Returns a dictionary with these entries:
+
+    "ip": list of IP addresses
+    "ip4": list of IPv4 addresses
+    "ip6": list of IPv6 addresses
     """
+    ip_addresses = {
+        "ip": [],
+        "ip4": [],
+        "ip6": [],
+    }
 
-    def __init__(self, potential_addresses):
-        self.potential_addresses = potential_addresses
-        self.ip_addresses = []
-        self.ipv4_addresses = []
-        self.ipv6_addresses = []
+    for address in potential_addresses:
+        try:
+            _ip = ipaddress.ip_interface(address)
+        except ipaddress.AddressValueError:
+            continue
 
-    def find_ip_addresses(self):
-        """
-        Searches a list for IP addresses.
-        Returns a new list containing the addresses it found.
-        """
-        for address in self.potential_addresses:
-            try:
-                _ip = ipaddress.ip_interface(address)
-            except ipaddress.AddressValueError:
-                continue
+        if _ip.version == 4:
+            ip_addresses["ip4"].append(_ip.with_prefixlen)
+        elif _ip.version == 6:
+            ip_addresses["ip6"].append(_ip.with_prefixlen)
 
-            if _ip.version == 4:
-                self.ipv4_addresses.append(_ip.with_prefixlen)
-            elif _ip.version == 6:
-                self.ipv6_addresses.append(_ip.with_prefixlen)
+        ip_addresses["ip"].append(_ip.with_prefixlen)
 
-            self.ip_addresses.append(_ip.with_prefixlen)
-
-        return self.ip_addresses
+    return ip_addresses
 
 
 try:
@@ -83,34 +82,22 @@ check_wg_key_validity(wg_config_data["public_key"], key_name="PublicKey")
 
 wg_endpoint_ip, wg_endpoint_port = wg_config_data["endpoint"].split(":")
 
-wg_allowed_ips_ip_finder = IPAddressFinder(
-    wg_config_data["allowed_ips"].split(",")
-)
-wg_allowed_ips_ip_finder.find_ip_addresses()
-
-wg_interface_ip_finder = IPAddressFinder(wg_config_data["address"].split(","))
-wg_interface_ip_finder.find_ip_addresses()
+wg_allowed_ips = find_ip_addresses(wg_config_data["allowed_ips"].split(","))
+wg_if_addresses = find_ip_addresses(wg_config_data["address"].split(","))
 
 
 print("wgkey " + wg_config_data["private_key"])
 print("wgpeer " + wg_config_data["public_key"] + " \\")
-print(
-    "\t"
-    + "wgendpoint "
-    + wg_endpoint_ip
-    + " "
-    + wg_endpoint_port
-    + " \\"
-)
+print("\t" + "wgendpoint " + wg_endpoint_ip + " " + wg_endpoint_port + " \\")
 
-for allowed_ip in wg_allowed_ips_ip_finder.ip_addresses:
-    if allowed_ip == wg_config_data["allowed_ips"][-1]:
+for allowed_ip in wg_allowed_ips["ip"]:
+    if allowed_ip == wg_allowed_ips["ip"][-1]:
         print(f"\twgaip {allowed_ip}")
     else:
         print(f"\twgaip {allowed_ip} \\")
 
-for ip4_addr in wg_interface_ip_finder.ipv4_addresses:
+for ip4_addr in wg_if_addresses["ip4"]:
     print(f"inet {ip4_addr}")
 
-for ip6_addr in wg_interface_ip_finder.ipv6_addresses:
+for ip6_addr in wg_if_addresses["ip6"]:
     print(f"inet6 {ip6_addr}")
