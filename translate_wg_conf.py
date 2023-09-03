@@ -9,6 +9,28 @@ import ipaddress
 import sys
 
 
+def to_str(bytes_or_str):
+    """
+    Given a str or bytes instance, return a string instance.
+    """
+    if isinstance(bytes_or_str, bytes):
+        value = bytes_or_str.decode("utf-8")
+    else:
+        value = bytes_or_str
+    return value
+
+
+def to_bytes(bytes_or_str):
+    """
+    Given a str or bytes instance, return a bytes instance.
+    """
+    if isinstance(bytes_or_str, str):
+        value = bytes_or_str.encode("utf-8")
+    else:
+        value = bytes_or_str
+    return value
+
+
 def check_wg_key_validity(key, key_name="Key"):
     """
     Validate the provided WireGuard key.
@@ -19,7 +41,8 @@ def check_wg_key_validity(key, key_name="Key"):
 
     Raises a ValueError if the length check fails.
     """
-    b64decoded_key = b64decode(bytes(key, "utf-8"), validate=True)
+    key_as_bytes = to_bytes(key)
+    b64decoded_key = b64decode(key_as_bytes, validate=True)
     if len(b64decoded_key) != 32:
         raise ValueError(f"{key_name} didn't base64 decode to 32 bytes.")
     return True
