@@ -70,33 +70,41 @@ with open(file=INI_FILE, mode="r", encoding="utf-8") as f:
     ini_parser = configparser.ConfigParser()
     ini_parser.read_file(f)
 
-wg_private_key = ini_parser.get(section="Interface", option="PrivateKey")
-check_wg_key_validity(wg_private_key, key_name="PrivateKey")
+wg_config_data = {
+    "private_key": ini_parser.get(section="Interface", option="PrivateKey"),
+    "public_key": ini_parser.get(section="Peer", option="PublicKey"),
+    "endpoint": ini_parser.get(section="Peer", option="Endpoint"),
+    "allowed_ips": ini_parser.get(section="Peer", option="AllowedIPs"),
+    "address": ini_parser.get(section="Interface", option="Address"),
+}
 
-wg_public_key = ini_parser.get(section="Peer", option="PublicKey")
-check_wg_key_validity(wg_public_key, key_name="PublicKey")
+check_wg_key_validity(wg_config_data["private_key"], key_name="PrivateKey")
+check_wg_key_validity(wg_config_data["public_key"], key_name="PublicKey")
 
-wg_endpoint_ip, wg_endpoint_port = ini_parser.get(
-    section="Peer", option="Endpoint"
-).split(":")
+wg_endpoint_ip, wg_endpoint_port = wg_config_data["endpoint"].split(":")
 
-wg_allowed_ips = ini_parser.get(section="Peer", option="AllowedIPs").split(",")
-wg_allowed_ips_ip_finder = IPAddressFinder(wg_allowed_ips)
+wg_allowed_ips_ip_finder = IPAddressFinder(
+    wg_config_data["allowed_ips"].split(",")
+)
 wg_allowed_ips_ip_finder.find_ip_addresses()
 
-wg_interface_addresses = ini_parser.get(
-    section="Interface", option="Address"
-).split(",")
-wg_interface_ip_finder = IPAddressFinder(wg_interface_addresses)
+wg_interface_ip_finder = IPAddressFinder(wg_config_data["address"].split(","))
 wg_interface_ip_finder.find_ip_addresses()
 
 
-print(f"wgkey {wg_private_key}")
-print(f"wgpeer {wg_public_key} \\")
-print(f"\twgendpoint {wg_endpoint_ip} {wg_endpoint_port} \\")
+print("wgkey " + wg_config_data["private_key"])
+print("wgpeer " + wg_config_data["public_key"] + " \\")
+print(
+    "\t"
+    + "wgendpoint "
+    + wg_endpoint_ip
+    + " "
+    + wg_endpoint_port
+    + " \\"
+)
 
 for allowed_ip in wg_allowed_ips_ip_finder.ip_addresses:
-    if allowed_ip == wg_allowed_ips[-1]:
+    if allowed_ip == wg_config_data["allowed_ips"][-1]:
         print(f"\twgaip {allowed_ip}")
     else:
         print(f"\twgaip {allowed_ip} \\")
