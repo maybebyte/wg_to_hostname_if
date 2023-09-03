@@ -82,11 +82,6 @@ class WGKeyValidator:
             self.validate_key(k)
 
 
-# TODO: this actually uses ipaddress.ip_network, meaning that something
-# like this would be seen as a valid IP address even though it isn't
-# actually:
-#
-# 192.168.1.0/24
 class IPAddressFinder:
     """
     Given a list, find IPv4/IPv6 addresses within that list.
@@ -98,44 +93,77 @@ class IPAddressFinder:
         self.ipv4_addresses = []
         self.ipv6_addresses = []
 
+    def _is_ip(self, ip):
+        """
+        Check if the given input is a valid IP address.
+
+        Parameters:
+        ip (str): The input string to be checked.
+
+        Returns:
+        - ipaddress.IPv4Interface or ipaddress.IPv6Interface, if ip
+          is a valid IP address.
+        - False if it isn't.
+        """
+
+        try:
+            _ip = ipaddress.ip_interface(ip)
+        except ipaddress.AddressValueError:
+            return False
+        return _ip
+
+    def _is_ipv4(self, ip):
+        """
+        Check if the given input is a valid IPv4 address.
+
+        Parameters:
+        ip (str): The input string to be checked.
+
+        Returns:
+        - ipaddress.IPv4Interface if ip is a valid IPv4 address.
+        - False if it isn't.
+        """
+
+        try:
+            _ip4 = ipaddress.IPv4Interface(ip)
+        except ipaddress.AddressValueError:
+            return False
+        return _ip4
+
+    def _is_ipv6(self, ip):
+        """
+        Check if the given input is a valid IPv6 address.
+
+        Parameters:
+        ip (str): The input string to be checked.
+
+        Returns:
+        - ipaddress.IPv6Interface if ip is a valid IPv6 address.
+        - False if it isn't.
+        """
+        try:
+            _ip6 = ipaddress.IPv6Interface(ip)
+        except ipaddress.AddressValueError:
+            return False
+        return _ip6
+
     def find_ip_addresses(self):
         """
         Searches a list for IP addresses.
         Returns a new list containing the addresses it found.
         """
         for address in self.potential_addresses:
-            try:
-                ip = ipaddress.ip_network(address)
-                self.ip_addresses.append(ip.compressed)
-            except ipaddress.AddressValueError:
+            if self._is_ip(address):
+                self.ip_addresses.append(address)
+            else:
                 continue
+
+            if self._is_ipv4(address):
+                self.ipv4_addresses.append(address)
+            elif self._is_ipv6(address):
+                self.ipv6_addresses.append(address)
+
         return self.ip_addresses
-
-    def find_ipv4_addresses(self):
-        """
-        Searches a list for IPv4 addresses.
-        Returns a new list containing the IPv4 addresses it found.
-        """
-        for address in self.potential_addresses:
-            try:
-                ip4 = ipaddress.IPv4Network(address)
-                self.ipv4_addresses.append(ip4.compressed)
-            except ipaddress.AddressValueError:
-                continue
-        return self.ipv4_addresses
-
-    def find_ipv6_addresses(self):
-        """
-        Searches a list for IPv6 addresses.
-        Returns a new list containing the IPv6 addresses it found.
-        """
-        for address in self.potential_addresses:
-            try:
-                ip6 = ipaddress.IPv6Network(address)
-                self.ipv6_addresses.append(ip6.compressed)
-            except ipaddress.AddressValueError:
-                continue
-        return self.ipv6_addresses
 
 
 try:
@@ -161,8 +189,7 @@ wg_allowed_ips = wg_accessor.get_peer_allowed_ips().split(",")
 
 wg_if_addrs = wg_accessor.get_interface_address().split(",")
 wg_if_ip_finder = IPAddressFinder(wg_if_addrs)
-wg_if_ip4_addrs = wg_if_ip_finder.find_ipv4_addresses()
-wg_if_ip6_addrs = wg_if_ip_finder.find_ipv6_addresses()
+wg_if_ip_finder.find_ip_addresses()
 
 
 print(f"wgkey {wg_private_key}")
@@ -175,8 +202,8 @@ for allowed_ip in wg_allowed_ips:
     else:
         print(f"\twgaip {allowed_ip} \\")
 
-for ip4_addr in wg_if_ip4_addrs:
+for ip4_addr in wg_if_ip_finder.ipv4_addresses:
     print(f"inet {ip4_addr}")
 
-for ip6_addr in wg_if_ip6_addrs:
+for ip6_addr in wg_if_ip_finder.ipv6_addresses:
     print(f"inet6 {ip6_addr}")
