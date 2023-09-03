@@ -131,26 +131,28 @@ wg_endpoint_ip, wg_endpoint_port = ini_parser.get(
 ).split(":")
 
 wg_allowed_ips = ini_parser.get(section="Peer", option="AllowedIPs").split(",")
-wg_aip_ip_finder = IPAddressFinder(wg_allowed_ips)
-wg_aip_ip_finder.find_ip_addresses()
+wg_allowed_ips_ip_finder = IPAddressFinder(wg_allowed_ips)
+wg_allowed_ips_ip_finder.find_ip_addresses()
 
-wg_if_addrs = ini_parser.get(section="Interface", option="Address").split(",")
-wg_if_ip_finder = IPAddressFinder(wg_if_addrs)
-wg_if_ip_finder.find_ip_addresses()
+wg_interface_addresses = ini_parser.get(
+    section="Interface", option="Address"
+).split(",")
+wg_interface_ip_finder = IPAddressFinder(wg_interface_addresses)
+wg_interface_ip_finder.find_ip_addresses()
 
 
 print(f"wgkey {wg_private_key}")
 print(f"wgpeer {wg_public_key} \\")
 print(f"\twgendpoint {wg_endpoint_ip} {wg_endpoint_port} \\")
 
-for allowed_ip in wg_aip_ip_finder.ip_addresses:
+for allowed_ip in wg_allowed_ips_ip_finder.ip_addresses:
     if allowed_ip == wg_allowed_ips[-1]:
         print(f"\twgaip {allowed_ip}")
     else:
         print(f"\twgaip {allowed_ip} \\")
 
-for ip4_addr in wg_if_ip_finder.ipv4_addresses:
+for ip4_addr in wg_interface_ip_finder.ipv4_addresses:
     print(f"inet {ip4_addr}")
 
-for ip6_addr in wg_if_ip_finder.ipv6_addresses:
+for ip6_addr in wg_interface_ip_finder.ipv6_addresses:
     print(f"inet6 {ip6_addr}")
