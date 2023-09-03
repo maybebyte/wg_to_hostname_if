@@ -9,7 +9,7 @@ import ipaddress
 import sys
 
 
-def validate_key(key, key_name="Key"):
+def check_wg_key_validity(key, key_name="Key"):
     """
     Validate the provided key.
 
@@ -121,10 +121,10 @@ with open(file=INI_FILE, mode="r", encoding="utf-8") as f:
     ini_parser.read_file(f)
 
 wg_private_key = ini_parser.get(section="Interface", option="PrivateKey")
-validate_key(wg_private_key, key_name="PrivateKey")
+check_wg_key_validity(wg_private_key, key_name="PrivateKey")
 
 wg_public_key = ini_parser.get(section="Peer", option="PublicKey")
-validate_key(wg_public_key, key_name="PublicKey")
+check_wg_key_validity(wg_public_key, key_name="PublicKey")
 
 wg_endpoint_ip, wg_endpoint_port = ini_parser.get(
     section="Peer", option="Endpoint"
