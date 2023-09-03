@@ -9,6 +9,7 @@ import ipaddress
 import sys
 
 
+# TODO: move out of class into a regular function.
 class WGKeyValidator:
     """
     Validate public and private WireGuard keys.
