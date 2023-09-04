@@ -73,7 +73,7 @@ def check_wg_key_validity(key, key_name="Key"):
     return True
 
 
-def find_ip_addresses(potential_addresses):
+def find_ips(potential_ips):
     """
     Searches a list for IP addresses.
 
@@ -82,26 +82,26 @@ def find_ip_addresses(potential_addresses):
     "ip4": list of IPv4 addresses
     "ip6": list of IPv6 addresses
     """
-    ip_addresses = {
+    ips = {
         "ip": [],
         "ip4": [],
         "ip6": [],
     }
 
-    for address in potential_addresses:
+    for ip in potential_ips:
         try:
-            _ip = ipaddress.ip_interface(address)
+            ip = ipaddress.ip_interface(ip)
         except ipaddress.AddressValueError:
             continue
 
-        if _ip.version == 4:
-            ip_addresses["ip4"].append(_ip)
-        elif _ip.version == 6:
-            ip_addresses["ip6"].append(_ip)
+        if ip.version == 4:
+            ips["ip4"].append(ip)
+        elif ip.version == 6:
+            ips["ip6"].append(ip)
 
-        ip_addresses["ip"].append(_ip)
+        ips["ip"].append(ip)
 
-    return ip_addresses
+    return ips
 
 
 if __name__ == "__main__":
@@ -135,10 +135,10 @@ if __name__ == "__main__":
         wg_config_data["endpoint"]
     )
 
-    wg_allowed_ips = find_ip_addresses(
+    wg_allowed_ips = find_ips(
         wg_config_data["allowed_ips"].split(",")
     )
-    wg_if_addresses = find_ip_addresses(wg_config_data["address"].split(","))
+    wg_if_addresses = find_ips(wg_config_data["address"].split(","))
 
     print("wgkey " + wg_config_data["private_key"])
     print("wgpeer " + wg_config_data["public_key"] + " \\")
