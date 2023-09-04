@@ -118,6 +118,8 @@ def find_ips(potential_ips, look_for="addresses"):
                 ip = ip.ip
             elif look_for == "networks":
                 ip = ip.network
+            else:
+                raise ValueError('look_for must be "addresses" or "networks".')
         except ipaddress.AddressValueError:
             continue
 
