@@ -45,7 +45,7 @@ def validate_and_extract_wg_endpoint(endpoint_entry):
     endpoint_entry_as_str = to_str(endpoint_entry)
     endpoint_ip, endpoint_port = endpoint_entry_as_str.split(":")
 
-    validated_ip = ipaddress.ip_interface(endpoint_ip)
+    validated_ip = ipaddress.ip_address(endpoint_ip)
     endpoint_port = int(endpoint_port)
 
     if not 0 <= endpoint_port <= 65535:
@@ -53,7 +53,7 @@ def validate_and_extract_wg_endpoint(endpoint_entry):
 
     validated_port = endpoint_port
 
-    return validated_ip.with_prefixlen, validated_port
+    return validated_ip, validated_port
 
 
 def check_wg_key_validity(key, key_name="Key"):
