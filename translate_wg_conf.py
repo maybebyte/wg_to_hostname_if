@@ -95,11 +95,11 @@ def find_ip_addresses(potential_addresses):
             continue
 
         if _ip.version == 4:
-            ip_addresses["ip4"].append(_ip.with_prefixlen)
+            ip_addresses["ip4"].append(_ip)
         elif _ip.version == 6:
-            ip_addresses["ip6"].append(_ip.with_prefixlen)
+            ip_addresses["ip6"].append(_ip)
 
-        ip_addresses["ip"].append(_ip.with_prefixlen)
+        ip_addresses["ip"].append(_ip)
 
     return ip_addresses
 
