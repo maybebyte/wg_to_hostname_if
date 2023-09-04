@@ -73,14 +73,20 @@ def check_wg_key_validity(key, key_name="Key"):
     return True
 
 
-def find_ips(potential_ips):
+def find_ips(potential_ips, look_for="addresses"):
     """
-    Searches a list for IP addresses.
+    Searches a list for IPs.
 
     Returns a dictionary with these entries:
-    "ip": list of IP addresses
-    "ip4": list of IPv4 addresses
-    "ip6": list of IPv6 addresses
+    "ip": list of IPs.
+    "ip4": list of IPs (IPv4 only).
+    "ip6": list of IPs (IPv6 only).
+
+    If look_for is provided, find_ips will look for a particular kind of
+    IP. Valid types include:
+
+    "addresses": Look for IP addresses. The default.
+    "network": Look for network ranges.
     """
     ips = {
         "ip": [],
@@ -91,6 +97,10 @@ def find_ips(potential_ips):
     for ip in potential_ips:
         try:
             ip = ipaddress.ip_interface(ip)
+            if look_for == "addresses":
+                ip = ip.ip
+            elif look_for == "networks":
+                ip = ip.network
         except ipaddress.AddressValueError:
             continue
 
@@ -136,9 +146,11 @@ if __name__ == "__main__":
     )
 
     wg_allowed_ips = find_ips(
-        wg_config_data["allowed_ips"].split(",")
+        wg_config_data["allowed_ips"].split(","), look_for="networks"
     )
-    wg_if_addresses = find_ips(wg_config_data["address"].split(","))
+    wg_if_addresses = find_ips(
+        wg_config_data["address"].split(","), look_for="addresses"
+    )
 
     print("wgkey " + wg_config_data["private_key"])
     print("wgpeer " + wg_config_data["public_key"] + " \\")
