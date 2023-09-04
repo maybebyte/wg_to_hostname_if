@@ -139,7 +139,7 @@ if __name__ == "__main__":
     print("\t" + f"wgendpoint {wg_endpoint_ip} {wg_endpoint_port} \\")
 
     for i, allowed_ip in enumerate(wg_allowed_ips["ip"]):
-        if i == len(wg_allowed_ips["ip"]):
+        if i == len(wg_allowed_ips["ip"]) - 1:
             print("\t" + f"wgaip {allowed_ip}")
         else:
             print("\t" + f"wgaip {allowed_ip} \\")
