@@ -35,6 +35,12 @@ def validate_and_extract_wg_endpoint(endpoint_entry):
     """
     Given the contents of a WireGuard Endpoint entry, return the IP and
     port.
+
+    Validation consists of these steps:
+    - Validate the IP address using the ipaddress library.
+    - Check that the port number is between 0 and 65535.
+
+    IP is returned as a string. Port is returned as an int.
     """
     endpoint_entry_as_str = to_str(endpoint_entry)
     endpoint_ip, endpoint_port = endpoint_entry_as_str.split(":")
@@ -42,7 +48,7 @@ def validate_and_extract_wg_endpoint(endpoint_entry):
     validated_ip = ipaddress.ip_interface(endpoint_ip)
     endpoint_port = int(endpoint_port)
 
-    if endpoint_port < 0 or endpoint_port > 65535:
+    if not 0 <= endpoint_port <= 65535:
         raise ValueError(f"{endpoint_port} is not a valid port number.")
 
     validated_port = endpoint_port
