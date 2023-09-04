@@ -98,50 +98,54 @@ def find_ip_addresses(potential_addresses):
     return ip_addresses
 
 
-try:
-    INI_FILE = sys.argv[1]
-except IndexError:
-    print(
-        f"{sys.argv[0]} needs a WireGuard configuration file.", file=sys.stderr
+if __name__ == "__main__":
+    try:
+        INI_FILE = sys.argv[1]
+    except IndexError:
+        print(
+            f"{sys.argv[0]} needs a WireGuard configuration file.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    with open(file=INI_FILE, mode="r", encoding="utf-8") as f:
+        ini_parser = configparser.ConfigParser()
+        ini_parser.read_file(f)
+
+    wg_config_data = {
+        "address": ini_parser.get(section="Interface", option="Address"),
+        "private_key": ini_parser.get(
+            section="Interface", option="PrivateKey"
+        ),
+        "allowed_ips": ini_parser.get(section="Peer", option="AllowedIPs"),
+        "endpoint": ini_parser.get(section="Peer", option="Endpoint"),
+        "public_key": ini_parser.get(section="Peer", option="PublicKey"),
+    }
+
+    check_wg_key_validity(wg_config_data["private_key"], key_name="PrivateKey")
+    check_wg_key_validity(wg_config_data["public_key"], key_name="PublicKey")
+
+    wg_endpoint_ip, wg_endpoint_port = validate_and_extract_wg_endpoint(
+        wg_config_data["endpoint"]
     )
-    sys.exit(1)
 
-with open(file=INI_FILE, mode="r", encoding="utf-8") as f:
-    ini_parser = configparser.ConfigParser()
-    ini_parser.read_file(f)
+    wg_allowed_ips = find_ip_addresses(
+        wg_config_data["allowed_ips"].split(",")
+    )
+    wg_if_addresses = find_ip_addresses(wg_config_data["address"].split(","))
 
+    print("wgkey " + wg_config_data["private_key"])
+    print("wgpeer " + wg_config_data["public_key"] + " \\")
+    print("\t" + f"wgendpoint {wg_endpoint_ip} {wg_endpoint_port} \\")
 
-wg_config_data = {
-    "address": ini_parser.get(section="Interface", option="Address"),
-    "private_key": ini_parser.get(section="Interface", option="PrivateKey"),
-    "allowed_ips": ini_parser.get(section="Peer", option="AllowedIPs"),
-    "endpoint": ini_parser.get(section="Peer", option="Endpoint"),
-    "public_key": ini_parser.get(section="Peer", option="PublicKey"),
-}
+    for i, allowed_ip in enumerate(wg_allowed_ips["ip"]):
+        if i == len(wg_allowed_ips["ip"]):
+            print("\t" + f"wgaip {allowed_ip}")
+        else:
+            print("\t" + f"wgaip {allowed_ip} \\")
 
-check_wg_key_validity(wg_config_data["private_key"], key_name="PrivateKey")
-check_wg_key_validity(wg_config_data["public_key"], key_name="PublicKey")
+    for ip4_addr in wg_if_addresses["ip4"]:
+        print(f"inet {ip4_addr}")
 
-wg_endpoint_ip, wg_endpoint_port = validate_and_extract_wg_endpoint(
-    wg_config_data["endpoint"]
-)
-
-wg_allowed_ips = find_ip_addresses(wg_config_data["allowed_ips"].split(","))
-wg_if_addresses = find_ip_addresses(wg_config_data["address"].split(","))
-
-
-print("wgkey " + wg_config_data["private_key"])
-print("wgpeer " + wg_config_data["public_key"] + " \\")
-print("\t" + f"wgendpoint {wg_endpoint_ip} {wg_endpoint_port} \\")
-
-for i, allowed_ip in enumerate(wg_allowed_ips["ip"]):
-    if i == len(wg_allowed_ips["ip"]):
-        print("\t" + f"wgaip {allowed_ip}")
-    else:
-        print("\t" + f"wgaip {allowed_ip} \\")
-
-for ip4_addr in wg_if_addresses["ip4"]:
-    print(f"inet {ip4_addr}")
-
-for ip6_addr in wg_if_addresses["ip6"]:
-    print(f"inet6 {ip6_addr}")
+    for ip6_addr in wg_if_addresses["ip6"]:
+        print(f"inet6 {ip6_addr}")
