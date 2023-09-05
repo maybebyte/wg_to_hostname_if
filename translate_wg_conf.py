@@ -161,7 +161,7 @@ def validate_and_extract_wg_endpoint(endpoint_entry):
     return validated_ip, validated_port
 
 
-def check_wg_key_validity(key, key_name="Key"):
+def validate_wg_key(key, key_name="Key"):
     """
     Validate the provided WireGuard key.
 
@@ -234,8 +234,8 @@ if __name__ == "__main__":
     wg_ini_parser = init_ini_parser(INI_FILE)
     wg_config_data = names_to_data(wg_ini_parser, NAME_TO_SECTION_AND_OPTION)
 
-    check_wg_key_validity(wg_config_data["private_key"], key_name="PrivateKey")
-    check_wg_key_validity(wg_config_data["public_key"], key_name="PublicKey")
+    validate_wg_key(wg_config_data["private_key"], key_name="PrivateKey")
+    validate_wg_key(wg_config_data["public_key"], key_name="PublicKey")
 
     wg_endpoint_ip, wg_endpoint_port = validate_and_extract_wg_endpoint(
         wg_config_data["endpoint"]
