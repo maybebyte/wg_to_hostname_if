@@ -232,24 +232,22 @@ if __name__ == "__main__":
         sys.exit(1)
 
     wg_ini_parser = init_ini_parser(INI_FILE)
-    wg_config_data = names_to_data(wg_ini_parser, NAME_TO_SECTION_AND_OPTION)
+    wg_data = names_to_data(wg_ini_parser, NAME_TO_SECTION_AND_OPTION)
+    new_wg_data = transform_wg_data(wg_data)
 
-    validate_wg_key(wg_config_data["private_key"], key_name="PrivateKey")
-    validate_wg_key(wg_config_data["public_key"], key_name="PublicKey")
-
-    wg_endpoint_ip, wg_endpoint_port = validate_and_extract_wg_endpoint(
-        wg_config_data["endpoint"]
-    )
+    validate_wg_key(new_wg_data["private_key"], key_name="PrivateKey")
+    validate_wg_key(new_wg_data["public_key"], key_name="PublicKey")
 
     wg_allowed_ips = find_ips(
-        wg_config_data["allowed_ips"].split(","), look_for="networks"
+        new_wg_data["allowed_ips"], look_for="networks"
     )
     wg_if_addresses = find_ips(
-        wg_config_data["address"].split(","), look_for="addresses"
+        new_wg_data["address"], look_for="addresses"
     )
 
-    print("wgkey " + wg_config_data["private_key"])
-    print("wgpeer " + wg_config_data["public_key"] + " \\")
+    wg_endpoint_ip, wg_endpoint_port = new_wg_data["endpoint"]
+    print("wgkey " + new_wg_data["private_key"])
+    print("wgpeer " + new_wg_data["public_key"] + " \\")
     print("\t" + f"wgendpoint {wg_endpoint_ip} {wg_endpoint_port} \\")
 
     for i, allowed_ip in enumerate(wg_allowed_ips["ip"]):
