@@ -156,16 +156,16 @@ if __name__ == "__main__":
         )
         sys.exit(1)
 
-    ini_parser = read_ini_file(INI_FILE)
+    wg_ini_parser = read_ini_file(INI_FILE)
 
     wg_config_data = {
-        "address": ini_parser.get(section="Interface", option="Address"),
-        "private_key": ini_parser.get(
+        "address": wg_ini_parser.get(section="Interface", option="Address"),
+        "private_key": wg_ini_parser.get(
             section="Interface", option="PrivateKey"
         ),
-        "allowed_ips": ini_parser.get(section="Peer", option="AllowedIPs"),
-        "endpoint": ini_parser.get(section="Peer", option="Endpoint"),
-        "public_key": ini_parser.get(section="Peer", option="PublicKey"),
+        "allowed_ips": wg_ini_parser.get(section="Peer", option="AllowedIPs"),
+        "endpoint": wg_ini_parser.get(section="Peer", option="Endpoint"),
+        "public_key": wg_ini_parser.get(section="Peer", option="PublicKey"),
     }
 
     check_wg_key_validity(wg_config_data["private_key"], key_name="PrivateKey")
