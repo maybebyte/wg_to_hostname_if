@@ -94,6 +94,25 @@ def names_to_data(ini_parser, name_to_section_and_option):
     return name_to_data
 
 
+def validate_network_port(port):
+    """
+    Validate a network port with these checks:
+
+    - Does int succeed?
+    - Is it contained within the range 0-65535?
+
+    Returns the port on success. Otherwise, it raises a ValueError.
+    """
+    try:
+        port = int(port)
+        if not 0 <= port <= 65535:
+            raise ValueError(f"{port} is not within the range 0-65535.")
+    except ValueError as e:
+        raise e
+
+    return port
+
+
 def validate_and_extract_wg_endpoint(endpoint_entry):
     """
     Given the contents of a WireGuard Endpoint entry, return the IP and
@@ -109,12 +128,7 @@ def validate_and_extract_wg_endpoint(endpoint_entry):
     endpoint_ip, endpoint_port = endpoint_entry_as_str.split(":")
 
     validated_ip = ipaddress.ip_address(endpoint_ip)
-    endpoint_port = int(endpoint_port)
-
-    if not 0 <= endpoint_port <= 65535:
-        raise ValueError(f"{endpoint_port} is not a valid port number.")
-
-    validated_port = endpoint_port
+    validated_port = validate_network_port(endpoint_port)
 
     return validated_ip, validated_port
 
