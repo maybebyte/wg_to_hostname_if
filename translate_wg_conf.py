@@ -34,6 +34,28 @@ NAME_TO_SECTION_AND_OPTION = {
 }
 
 
+def to_str(bytes_or_str):
+    """
+    Given a str or bytes instance, return a string instance.
+    """
+    if isinstance(bytes_or_str, bytes):
+        value = bytes_or_str.decode("utf-8")
+    else:
+        value = bytes_or_str
+    return value
+
+
+def to_bytes(bytes_or_str):
+    """
+    Given a str or bytes instance, return a bytes instance.
+    """
+    if isinstance(bytes_or_str, str):
+        value = bytes_or_str.encode("utf-8")
+    else:
+        value = bytes_or_str
+    return value
+
+
 def init_ini_parser(ini_file_path):
     """
     Receives an INI configuration file as an argument.
@@ -70,28 +92,6 @@ def names_to_data(ini_parser, name_to_section_and_option):
         name_to_data[name] = wg_ini_parser.get(section, option)
 
     return name_to_data
-
-
-def to_str(bytes_or_str):
-    """
-    Given a str or bytes instance, return a string instance.
-    """
-    if isinstance(bytes_or_str, bytes):
-        value = bytes_or_str.decode("utf-8")
-    else:
-        value = bytes_or_str
-    return value
-
-
-def to_bytes(bytes_or_str):
-    """
-    Given a str or bytes instance, return a bytes instance.
-    """
-    if isinstance(bytes_or_str, str):
-        value = bytes_or_str.encode("utf-8")
-    else:
-        value = bytes_or_str
-    return value
 
 
 def validate_and_extract_wg_endpoint(endpoint_entry):
