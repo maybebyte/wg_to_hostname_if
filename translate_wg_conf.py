@@ -25,18 +25,51 @@ import configparser
 import ipaddress
 import sys
 
+NAME_TO_SECTION_AND_OPTION = {
+    "address": ("Interface", "Address"),
+    "private_key": ("Interface", "PrivateKey"),
+    "allowed_ips": ("Peer", "AllowedIPs"),
+    "endpoint": ("Peer", "Endpoint"),
+    "public_key": ("Peer", "PublicKey"),
+}
 
-def read_ini_file(ini_file_path):
+
+def init_ini_parser(ini_file_path):
     """
     Receives an INI configuration file as an argument.
 
-    Opens the file, reads it, and returns the appropriate configparser
-    instance.
+    Opens the file, reads it, and returns the appropriate
+    configparser.ConfigParser instance.
     """
     with open(file=ini_file_path, mode="r", encoding="utf-8") as f:
         ini_parser = configparser.ConfigParser()
         ini_parser.read_file(f)
     return ini_parser
+
+
+def names_to_data(ini_parser, name_to_section_and_option):
+    """
+    ini_parser: a configparser.ConfigParser() instance.
+
+    name_to_section_and_option: a dictionary where the keys are
+    names, and the values are each tuples that contain the corresponding
+    section and option.
+
+    Extracts configuration data from ini_parser by iterating through
+    the name_to_section_and_option dictionary.
+
+    Returns a dictionary where the keys are the names and the values
+    are the corresponding data.
+    """
+    if not isinstance(ini_parser, configparser.ConfigParser):
+        raise SystemExit("Expected configparser.ConfigParser instance.")
+
+    name_to_data = {}
+
+    for name, (section, option) in name_to_section_and_option.items():
+        name_to_data[name] = wg_ini_parser.get(section, option)
+
+    return name_to_data
 
 
 def to_str(bytes_or_str):
@@ -156,17 +189,8 @@ if __name__ == "__main__":
         )
         sys.exit(1)
 
-    wg_ini_parser = read_ini_file(INI_FILE)
-
-    wg_config_data = {
-        "address": wg_ini_parser.get(section="Interface", option="Address"),
-        "private_key": wg_ini_parser.get(
-            section="Interface", option="PrivateKey"
-        ),
-        "allowed_ips": wg_ini_parser.get(section="Peer", option="AllowedIPs"),
-        "endpoint": wg_ini_parser.get(section="Peer", option="Endpoint"),
-        "public_key": wg_ini_parser.get(section="Peer", option="PublicKey"),
-    }
+    wg_ini_parser = init_ini_parser(INI_FILE)
+    wg_config_data = names_to_data(wg_ini_parser, NAME_TO_SECTION_AND_OPTION)
 
     check_wg_key_validity(wg_config_data["private_key"], key_name="PrivateKey")
     check_wg_key_validity(wg_config_data["public_key"], key_name="PublicKey")
