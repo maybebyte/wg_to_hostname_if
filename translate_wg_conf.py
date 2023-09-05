@@ -94,6 +94,34 @@ def names_to_data(ini_parser, name_to_section_and_option):
     return name_to_data
 
 
+def transform_wg_data(wg_config_data):
+    """
+    Receives a dictionary containing lowercase names of WireGuard
+    INI options as the keys and their associated data as the values.
+
+    Performs processing on them such that the values for these names
+    are different:
+
+    "endpoint": list containing an IP address and a network port
+    "allowed_ips": list containing IP networks/addresses allowed by the
+    server
+    "address": list containing interface addresses
+
+    Note that this does NOT validate the data.
+
+    Returns a dictionary using the same key names, but with updated
+    data.
+    """
+
+    new_config_data = wg_config_data
+
+    new_config_data["endpoint"] = wg_config_data["endpoint"].split(":")
+    new_config_data["allowed_ips"] = wg_config_data["allowed_ips"].split(",")
+    new_config_data["address"] = wg_config_data["address"].split(",")
+
+    return new_config_data
+
+
 def validate_network_port(port):
     """
     Validate a network port with these checks:
