@@ -26,6 +26,19 @@ import ipaddress
 import sys
 
 
+def read_ini_file(ini_file_path):
+    """
+    Receives an INI configuration file as an argument.
+
+    Opens the file, reads it, and returns the appropriate configparser
+    instance.
+    """
+    with open(file=ini_file_path, mode="r", encoding="utf-8") as f:
+        ini_parser = configparser.ConfigParser()
+        ini_parser.read_file(f)
+    return ini_parser
+
+
 def to_str(bytes_or_str):
     """
     Given a str or bytes instance, return a string instance.
@@ -143,9 +156,7 @@ if __name__ == "__main__":
         )
         sys.exit(1)
 
-    with open(file=INI_FILE, mode="r", encoding="utf-8") as f:
-        ini_parser = configparser.ConfigParser()
-        ini_parser.read_file(f)
+    ini_parser = read_ini_file(INI_FILE)
 
     wg_config_data = {
         "address": ini_parser.get(section="Interface", option="Address"),
