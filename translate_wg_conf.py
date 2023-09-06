@@ -203,6 +203,18 @@ def validate_ip(potential_ip, type_of_ip="address", version="any"):
     return validated_ip
 
 
+def validate_ips(potential_ips, type_of_ip="address", version="any"):
+    """
+    Iterates through a list of IPs and validates them the way
+    validate_ip does.
+
+    On success, simply returns True.
+    """
+    for ip in potential_ips:
+        validate_ip(ip, type_of_ip, version)
+    return True
+
+
 def extract_ips(potential_ips, type_of_ip="address", version="any"):
     """
     Searches a list for IPs.
@@ -241,6 +253,25 @@ def extract_ips(potential_ips, type_of_ip="address", version="any"):
     return ips
 
 
+def validate_wg_data(transformed_wg_data):
+    """
+    Validates transformed WireGuard data and returns it on success.
+    """
+    validate_wg_key(transformed_wg_data["private_key"], key_name="PrivateKey")
+    validate_wg_key(transformed_wg_data["public_key"], key_name="PublicKey")
+
+    validate_ips(
+        transformed_wg_data["allowed_ips"], type_of_ip="network"
+    )
+    validate_ips(transformed_wg_data["address"])
+
+    endpoint_ip, endpoint_port = transformed_wg_data["endpoint"]
+    validate_ip(endpoint_ip)
+    validate_network_port(endpoint_port)
+
+    return transformed_wg_data
+
+
 if __name__ == "__main__":
     try:
         INI_FILE = sys.argv[1]
@@ -255,8 +286,7 @@ if __name__ == "__main__":
     wg_data = names_to_data(wg_ini_parser, NAME_TO_SECTION_AND_OPTION)
     new_wg_data = transform_wg_data(wg_data)
 
-    validate_wg_key(new_wg_data["private_key"], key_name="PrivateKey")
-    validate_wg_key(new_wg_data["public_key"], key_name="PublicKey")
+    validate_wg_data(new_wg_data)
 
     wg_allowed_ips = extract_ips(
         new_wg_data["allowed_ips"], type_of_ip="network"
