@@ -33,6 +33,14 @@ NAME_TO_SECTION_AND_OPTION = {
     "public_key": ("Peer", "PublicKey"),
 }
 
+NAME_TO_IFCONFIG_ARG = {
+    "address": "inet",
+    "private_key": "wgkey",
+    "allowed_ips": "wgaip",
+    "endpoint": "wgendpoint",
+    "public_key": "wgpeer",
+}
+
 
 def to_str(bytes_or_str):
     """
@@ -182,9 +190,7 @@ def validate_ip(potential_ip, type_of_ip="address", version="any"):
     type_of_ip.
     """
     if type_of_ip not in ("address", "network", "any"):
-        raise SystemExit(
-            'type_of_ip must be "address", "network", or "any"'
-        )
+        raise SystemExit('type_of_ip must be "address", "network", or "any"')
     if version not in (4, 6, "any"):
         raise SystemExit('version must be 4, 6, or "any"')
 
@@ -260,9 +266,7 @@ def validate_wg_data(transformed_wg_data):
     validate_wg_key(transformed_wg_data["private_key"], key_name="PrivateKey")
     validate_wg_key(transformed_wg_data["public_key"], key_name="PublicKey")
 
-    validate_ips(
-        transformed_wg_data["allowed_ips"], type_of_ip="network"
-    )
+    validate_ips(transformed_wg_data["allowed_ips"], type_of_ip="network")
     validate_ips(transformed_wg_data["address"])
 
     endpoint_ip, endpoint_port = transformed_wg_data["endpoint"]
@@ -270,6 +274,65 @@ def validate_wg_data(transformed_wg_data):
     validate_network_port(endpoint_port)
 
     return transformed_wg_data
+
+
+def convert_wg_to_hostname_if(transformed_wg_data, name_to_ifconfig_arg):
+    """
+    Given transformed WireGuard data and a dictionary containing
+    the ifconfig argument each option maps to, create a list of
+    strings in hostname.if(5) format and return the list.
+    """
+    wg_allowed_ips = extract_ips(
+        transformed_wg_data["allowed_ips"], type_of_ip="network"
+    )
+    wg_if_addresses = extract_ips(transformed_wg_data["address"])
+
+    hostname_if_lines = []
+
+    hostname_if_lines.append(
+        name_to_ifconfig_arg["private_key"]
+        + " "
+        + transformed_wg_data["private_key"]
+    )
+    hostname_if_lines.append(
+        name_to_ifconfig_arg["public_key"]
+        + " "
+        + transformed_wg_data["public_key"]
+        + " \\"
+    )
+    hostname_if_lines.append(
+        "\t"
+        + name_to_ifconfig_arg["endpoint"]
+        + " "
+        + " ".join(transformed_wg_data["endpoint"])
+        + " \\"
+    )
+
+    for i, allowed_ip in enumerate(wg_allowed_ips["ip"]):
+        if i == len(wg_allowed_ips["ip"]) - 1:
+            line_end = ""
+        else:
+            line_end = " \\"
+
+        hostname_if_lines.append(
+            "\t"
+            + name_to_ifconfig_arg["allowed_ips"]
+            + " "
+            + f"{allowed_ip}"
+            + line_end
+        )
+
+    for ip4_addr in wg_if_addresses["ip4"]:
+        hostname_if_lines.append(
+            name_to_ifconfig_arg["address"] + " " + f"{ip4_addr}"
+        )
+
+    for ip6_addr in wg_if_addresses["ip6"]:
+        hostname_if_lines.append(
+            name_to_ifconfig_arg["address"] + "6 " + f"{ip6_addr}"
+        )
+
+    return hostname_if_lines
 
 
 if __name__ == "__main__":
@@ -288,25 +351,7 @@ if __name__ == "__main__":
 
     validate_wg_data(new_wg_data)
 
-    wg_allowed_ips = extract_ips(
-        new_wg_data["allowed_ips"], type_of_ip="network"
-    )
-    wg_if_addresses = extract_ips(new_wg_data["address"])
-
-    wg_endpoint_ip, wg_endpoint_port = new_wg_data["endpoint"]
-
-    print("wgkey " + new_wg_data["private_key"])
-    print("wgpeer " + new_wg_data["public_key"] + " \\")
-    print("\t" + f"wgendpoint {wg_endpoint_ip} {wg_endpoint_port} \\")
-
-    for i, allowed_ip in enumerate(wg_allowed_ips["ip"]):
-        if i == len(wg_allowed_ips["ip"]) - 1:
-            print("\t" + f"wgaip {allowed_ip}")
-        else:
-            print("\t" + f"wgaip {allowed_ip} \\")
-
-    for ip4_addr in wg_if_addresses["ip4"]:
-        print(f"inet {ip4_addr}")
-
-    for ip6_addr in wg_if_addresses["ip6"]:
-        print(f"inet6 {ip6_addr}")
+    for wg_line in convert_wg_to_hostname_if(
+        new_wg_data, NAME_TO_IFCONFIG_ARG
+    ):
+        print(wg_line)
