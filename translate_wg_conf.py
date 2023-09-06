@@ -178,7 +178,7 @@ def validate_wg_key(key, key_name="Key"):
     return True
 
 
-def find_ips(potential_ips, look_for="addresses"):
+def extract_ips(potential_ips, look_for="addresses"):
     """
     Searches a list for IPs.
 
@@ -238,10 +238,10 @@ if __name__ == "__main__":
     validate_wg_key(new_wg_data["private_key"], key_name="PrivateKey")
     validate_wg_key(new_wg_data["public_key"], key_name="PublicKey")
 
-    wg_allowed_ips = find_ips(
+    wg_allowed_ips = extract_ips(
         new_wg_data["allowed_ips"], look_for="networks"
     )
-    wg_if_addresses = find_ips(
+    wg_if_addresses = extract_ips(
         new_wg_data["address"], look_for="addresses"
     )
 
