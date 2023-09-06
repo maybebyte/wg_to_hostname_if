@@ -185,7 +185,7 @@ def validate_ip(potential_ip, type_of_ip="address", version="any"):
 
     validated_ip = ipaddress.ip_interface(potential_ip)
 
-    if version != "any" and version != validated_ip.version:
+    if version not in ("any", validated_ip.version):
         raise ipaddress.AddressValueError(
             f"{validated_ip} doesn't look like IPv{validated_ip.version}"
         )
