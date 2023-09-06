@@ -205,7 +205,7 @@ def validate_ip(potential_ip, type_of_ip="address", version="any"):
     return validated_ip
 
 
-def extract_ips(potential_ips, type_of_ip="address"):
+def extract_ips(potential_ips, type_of_ip="address", version="any"):
     """
     Searches a list for IPs.
 
@@ -229,7 +229,7 @@ def extract_ips(potential_ips, type_of_ip="address"):
 
     for ip in potential_ips:
         try:
-            ip = validate_ip(ip, type_of_ip)
+            ip = validate_ip(ip, type_of_ip, version)
         except ipaddress.AddressValueError:
             continue
 
