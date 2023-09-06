@@ -33,14 +33,6 @@ NAME_TO_SECTION_AND_OPTION = {
     "public_key": ("Peer", "PublicKey"),
 }
 
-NAME_TO_IFCONFIG_ARG = {
-    "address": "inet",
-    "private_key": "wgkey",
-    "allowed_ips": "wgaip",
-    "endpoint": "wgendpoint",
-    "public_key": "wgpeer",
-}
-
 
 def to_str(bytes_or_str):
     """
@@ -225,23 +217,23 @@ def extract_ips(potential_ips, type_of_ip="address", version="any"):
     """
     Searches a list for IPs.
 
-    Returns a dictionary with these entries:
-    "ip": list of IPs.
-    "ip4": list of IPs (IPv4 only).
-    "ip6": list of IPs (IPv6 only).
+    Returns a new list containing the IPs it found.
 
-    If type_of_ip is provided, extract_ips will look for a particular kind of
-    IP. Valid types include:
+    If type_of_ip is provided, extract_ips will look for a particular
+    kind of IP. Valid types include:
 
     "address": Look for IP addresses. The default.
     "network": Look for network ranges.
     "any": Look for either.
+
+    If version is provided, extract_ips will only accept IPs with
+    a particular IP version. Versions include:
+
+    4: IPv4.
+    6: IPv6.
+    "any": Either. The default.
     """
-    ips = {
-        "ip": [],
-        "ip4": [],
-        "ip6": [],
-    }
+    ips = []
 
     for ip in potential_ips:
         try:
@@ -249,12 +241,8 @@ def extract_ips(potential_ips, type_of_ip="address", version="any"):
         except ipaddress.AddressValueError:
             continue
 
-        if ip.version == 4:
-            ips["ip4"].append(ip)
-        elif ip.version == 6:
-            ips["ip6"].append(ip)
-
-        ips["ip"].append(ip)
+        if version in ("any", ip.version):
+            ips.append(ip)
 
     return ips
 
@@ -276,61 +264,42 @@ def validate_wg_data(transformed_wg_data):
     return transformed_wg_data
 
 
-def convert_wg_to_hostname_if(transformed_wg_data, name_to_ifconfig_arg):
+def convert_wg_to_hostname_if(transformed_wg_data):
     """
     Given transformed WireGuard data and a dictionary containing
     the ifconfig argument each option maps to, create a list of
     strings in hostname.if(5) format and return the list.
     """
-    wg_allowed_ips = extract_ips(
-        transformed_wg_data["allowed_ips"], type_of_ip="network"
-    )
-    wg_if_addresses = extract_ips(transformed_wg_data["address"])
-
     hostname_if_lines = []
 
+    hostname_if_lines.append("wgkey " + transformed_wg_data["private_key"])
     hostname_if_lines.append(
-        name_to_ifconfig_arg["private_key"]
-        + " "
-        + transformed_wg_data["private_key"]
-    )
-    hostname_if_lines.append(
-        name_to_ifconfig_arg["public_key"]
-        + " "
-        + transformed_wg_data["public_key"]
-        + " \\"
+        "wgpeer " + transformed_wg_data["public_key"] + " \\"
     )
     hostname_if_lines.append(
         "\t"
-        + name_to_ifconfig_arg["endpoint"]
-        + " "
+        + "wgendpoint "
         + " ".join(transformed_wg_data["endpoint"])
         + " \\"
     )
 
-    for i, allowed_ip in enumerate(wg_allowed_ips["ip"]):
-        if i == len(wg_allowed_ips["ip"]) - 1:
+    for i, allowed_ip in enumerate(
+        allowed_ips := extract_ips(
+            transformed_wg_data["allowed_ips"], type_of_ip="network"
+        )
+    ):
+        if i == len(allowed_ips) - 1:
             line_end = ""
         else:
             line_end = " \\"
+        hostname_if_lines.append("\t" + f"wgaip {allowed_ip}" + line_end)
 
-        hostname_if_lines.append(
-            "\t"
-            + name_to_ifconfig_arg["allowed_ips"]
-            + " "
-            + f"{allowed_ip}"
-            + line_end
-        )
-
-    for ip4_addr in wg_if_addresses["ip4"]:
-        hostname_if_lines.append(
-            name_to_ifconfig_arg["address"] + " " + f"{ip4_addr}"
-        )
-
-    for ip6_addr in wg_if_addresses["ip6"]:
-        hostname_if_lines.append(
-            name_to_ifconfig_arg["address"] + "6 " + f"{ip6_addr}"
-        )
+    for ip_addr in extract_ips(transformed_wg_data["address"]):
+        if ip_addr.version == 4:
+            ifconfig_arg = "inet"
+        elif ip_addr.version == 6:
+            ifconfig_arg = "inet6"
+        hostname_if_lines.append(f"{ifconfig_arg} {ip_addr}")
 
     return hostname_if_lines
 
@@ -351,7 +320,5 @@ if __name__ == "__main__":
 
     validate_wg_data(new_wg_data)
 
-    for wg_line in convert_wg_to_hostname_if(
-        new_wg_data, NAME_TO_IFCONFIG_ARG
-    ):
+    for wg_line in convert_wg_to_hostname_if(new_wg_data):
         print(wg_line)
