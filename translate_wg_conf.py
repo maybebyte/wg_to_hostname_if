@@ -131,13 +131,9 @@ def validate_network_port(port):
 
     Returns the port on success. Otherwise, it raises a ValueError.
     """
-    try:
-        port = int(port)
-        if not 0 <= port <= 65535:
-            raise ValueError(f"{port} is not within the range 0-65535.")
-    except ValueError as e:
-        raise e
-
+    port = int(port)
+    if not 0 <= port <= 65535:
+        raise ValueError(f"{port} is not within the range 0-65535.")
     return port
 
 
@@ -180,27 +176,24 @@ def validate_ip(potential_ip, type_of_ip="address", version="any"):
     Returns the appropriate ipaddress object based on the value of
     type_of_ip.
     """
-    try:
-        if type_of_ip not in ("address", "network", "any"):
-            raise SystemExit(
-                'type_of_ip must be "address", "network", or "any"'
-            )
-        if version not in (4, 6, "any"):
-            raise SystemExit('version must be 4, 6, or "any"')
+    if type_of_ip not in ("address", "network", "any"):
+        raise SystemExit(
+            'type_of_ip must be "address", "network", or "any"'
+        )
+    if version not in (4, 6, "any"):
+        raise SystemExit('version must be 4, 6, or "any"')
 
-        validated_ip = ipaddress.ip_interface(potential_ip)
+    validated_ip = ipaddress.ip_interface(potential_ip)
 
-        if version != "any" and version != validated_ip.version:
-            raise ipaddress.AddressValueError(
-                f"{validated_ip} doesn't look like IPv{validated_ip.version}"
-            )
+    if version != "any" and version != validated_ip.version:
+        raise ipaddress.AddressValueError(
+            f"{validated_ip} doesn't look like IPv{validated_ip.version}"
+        )
 
-        if type_of_ip == "address":
-            validated_ip = validated_ip.ip
-        elif type_of_ip == "network":
-            validated_ip = validated_ip.network
-    except Exception as e:
-        raise e
+    if type_of_ip == "address":
+        validated_ip = validated_ip.ip
+    elif type_of_ip == "network":
+        validated_ip = validated_ip.network
 
     return validated_ip
 
