@@ -158,7 +158,54 @@ def validate_wg_key(key, key_name="Key"):
     return True
 
 
-def extract_ips(potential_ips, look_for="addresses"):
+def validate_ip(potential_ip, type_of_ip="address", version="any"):
+    """
+    Given a potential IP, validate it and make sure it matches any
+    other specified criteria.
+
+    If type_of_ip is provided, validate_ip will only consider a
+    particular kind of IP valid. Types include:
+
+    "address": An IP address. The default.
+    "network": A network range.
+    "any": Either.
+
+    If version is provided, validate_ip will only consider a
+    particular IP version valid. Versions include:
+
+    4: IPv4.
+    6: IPv6.
+    "any": Either. The default.
+
+    Returns the appropriate ipaddress object based on the value of
+    type_of_ip.
+    """
+    try:
+        if type_of_ip not in ("address", "network", "any"):
+            raise SystemExit(
+                'type_of_ip must be "address", "network", or "any"'
+            )
+        if version not in (4, 6, "any"):
+            raise SystemExit('version must be 4, 6, or "any"')
+
+        validated_ip = ipaddress.ip_interface(potential_ip)
+
+        if version != "any" and version != validated_ip.version:
+            raise ipaddress.AddressValueError(
+                f"{validated_ip} doesn't look like IPv{validated_ip.version}"
+            )
+
+        if type_of_ip == "address":
+            validated_ip = validated_ip.ip
+        elif type_of_ip == "network":
+            validated_ip = validated_ip.network
+    except Exception as e:
+        raise e
+
+    return validated_ip
+
+
+def extract_ips(potential_ips, type_of_ip="address"):
     """
     Searches a list for IPs.
 
@@ -167,11 +214,12 @@ def extract_ips(potential_ips, look_for="addresses"):
     "ip4": list of IPs (IPv4 only).
     "ip6": list of IPs (IPv6 only).
 
-    If look_for is provided, find_ips will look for a particular kind of
+    If type_of_ip is provided, extract_ips will look for a particular kind of
     IP. Valid types include:
 
-    "addresses": Look for IP addresses. The default.
+    "address": Look for IP addresses. The default.
     "network": Look for network ranges.
+    "any": Look for either.
     """
     ips = {
         "ip": [],
@@ -181,13 +229,7 @@ def extract_ips(potential_ips, look_for="addresses"):
 
     for ip in potential_ips:
         try:
-            ip = ipaddress.ip_interface(ip)
-            if look_for == "addresses":
-                ip = ip.ip
-            elif look_for == "networks":
-                ip = ip.network
-            else:
-                raise ValueError('look_for must be "addresses" or "networks".')
+            ip = validate_ip(ip, type_of_ip)
         except ipaddress.AddressValueError:
             continue
 
@@ -219,11 +261,9 @@ if __name__ == "__main__":
     validate_wg_key(new_wg_data["public_key"], key_name="PublicKey")
 
     wg_allowed_ips = extract_ips(
-        new_wg_data["allowed_ips"], look_for="networks"
+        new_wg_data["allowed_ips"], type_of_ip="network"
     )
-    wg_if_addresses = extract_ips(
-        new_wg_data["address"], look_for="addresses"
-    )
+    wg_if_addresses = extract_ips(new_wg_data["address"])
 
     wg_endpoint_ip, wg_endpoint_port = new_wg_data["endpoint"]
     print("wgkey " + new_wg_data["private_key"])
