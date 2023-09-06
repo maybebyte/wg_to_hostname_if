@@ -259,6 +259,7 @@ if __name__ == "__main__":
     wg_if_addresses = extract_ips(new_wg_data["address"])
 
     wg_endpoint_ip, wg_endpoint_port = new_wg_data["endpoint"]
+
     print("wgkey " + new_wg_data["private_key"])
     print("wgpeer " + new_wg_data["public_key"] + " \\")
     print("\t" + f"wgendpoint {wg_endpoint_ip} {wg_endpoint_port} \\")
