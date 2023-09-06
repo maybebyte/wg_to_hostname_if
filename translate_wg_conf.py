@@ -115,9 +115,14 @@ def transform_wg_data(wg_config_data):
 
     new_config_data = wg_config_data
 
-    new_config_data["endpoint"] = wg_config_data["endpoint"].split(":")
-    new_config_data["allowed_ips"] = wg_config_data["allowed_ips"].split(",")
-    new_config_data["address"] = wg_config_data["address"].split(",")
+    name_to_split_val = {
+        "endpoint": ":",
+        "allowed_ips": ",",
+        "address": ",",
+    }
+
+    for name, split_val in name_to_split_val.items():
+        new_config_data[name] = wg_config_data[name].split(split_val)
 
     return new_config_data
 
