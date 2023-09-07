@@ -56,7 +56,7 @@ def to_bytes(bytes_or_str):
     return value
 
 
-def init_ini_parser(ini_file_path):
+def init_ini_parser(ini_file_path: str) -> configparser.ConfigParser:
     """
     Receives an INI configuration file as an argument.
 
@@ -69,7 +69,9 @@ def init_ini_parser(ini_file_path):
     return ini_parser
 
 
-def names_to_data(ini_parser, name_to_section_and_option):
+def names_to_data(
+    ini_parser: configparser.ConfigParser, name_to_section_and_option: dict
+) -> dict:
     """
     ini_parser: a configparser.ConfigParser() instance.
 
@@ -94,7 +96,7 @@ def names_to_data(ini_parser, name_to_section_and_option):
     return name_to_data
 
 
-def transform_wg_data(wg_config_data):
+def transform_wg_data(wg_config_data: dict) -> dict:
     """
     Receives a dictionary containing lowercase names of WireGuard
     INI options as the keys and their associated data as the values.
@@ -125,7 +127,7 @@ def transform_wg_data(wg_config_data):
     return new_config_data
 
 
-def validate_network_port(port):
+def validate_network_port(port: int) -> int:
     """
     Validate a network port with these checks:
 
@@ -140,7 +142,7 @@ def validate_network_port(port):
     return port
 
 
-def validate_wg_key(key, key_name="Key"):
+def validate_wg_key(key: str, key_name="Key") -> bool:
     """
     Validate the provided WireGuard key.
 
@@ -157,7 +159,7 @@ def validate_wg_key(key, key_name="Key"):
     return True
 
 
-def validate_ip(potential_ip, type_of_ip="address", version="any"):
+def validate_ip(potential_ip: str, type_of_ip="address", version="any"):
     """
     Given a potential IP, validate it and make sure it matches any
     other specified criteria.
@@ -192,14 +194,22 @@ def validate_ip(potential_ip, type_of_ip="address", version="any"):
         )
 
     if type_of_ip == "address":
-        validated_ip = validated_ip.ip
+        try:
+            validated_ip.ip
+        except Exception as e:
+            raise e
     elif type_of_ip == "network":
-        validated_ip = validated_ip.network
+        try:
+            validated_ip.network
+        except Exception as e:
+            raise e
 
     return validated_ip
 
 
-def validate_ips(potential_ips, type_of_ip="address", version="any"):
+def validate_ips(
+    potential_ips: list, type_of_ip="address", version="any"
+) -> bool:
     """
     Iterates through a list of IPs and validates them the way
     validate_ip does.
@@ -221,7 +231,9 @@ def validate_ips(potential_ips, type_of_ip="address", version="any"):
     return True
 
 
-def extract_ips(potential_ips, type_of_ip="address", version="any"):
+def extract_ips(
+    potential_ips: list, type_of_ip="address", version="any"
+) -> list:
     """
     Searches a list for IPs.
 
@@ -257,7 +269,7 @@ def extract_ips(potential_ips, type_of_ip="address", version="any"):
     return ips
 
 
-def validate_wg_data(transformed_wg_data):
+def validate_wg_data(transformed_wg_data: dict) -> dict:
     """
     Validates transformed WireGuard data and returns it on success.
     """
@@ -274,7 +286,7 @@ def validate_wg_data(transformed_wg_data):
     return transformed_wg_data
 
 
-def convert_wg_to_hostname_if(transformed_wg_data):
+def convert_wg_to_hostname_if(transformed_wg_data: dict) -> list:
     """
     Given transformed WireGuard data and a dictionary containing
     the ifconfig argument each option maps to, create a list of
