@@ -107,22 +107,20 @@ def transform_wg_data(wg_config_data):
     server
     "address": list containing interface addresses
 
-    Note that this does NOT validate the data.
-
     Returns a dictionary using the same key names, but with updated
     data.
     """
-
     new_config_data = wg_config_data
 
-    name_to_split_val = {
-        "endpoint": ":",
-        "allowed_ips": ",",
-        "address": ",",
-    }
+    new_config_data["endpoint"] = new_config_data["endpoint"].split(":")
 
-    for name, split_val in name_to_split_val.items():
-        new_config_data[name] = wg_config_data[name].split(split_val)
+    new_config_data["allowed_ips"] = extract_ips(
+        new_config_data["allowed_ips"].split(","), type_of_ip="network"
+    )
+
+    new_config_data["address"] = extract_ips(
+        new_config_data["address"].split(",")
+    )
 
     return new_config_data
 
@@ -208,6 +206,16 @@ def validate_ips(potential_ips, type_of_ip="address", version="any"):
 
     On success, simply returns True.
     """
+    if not isinstance(potential_ips, list):
+        raise TypeError(
+            "validate_ips: 'potential_ips' argument accepts a list."
+        )
+
+    if not potential_ips:
+        raise ValueError(
+            "validate_ips: 'potential_ips' argument needs a non-empty list."
+        )
+
     for ip in potential_ips:
         validate_ip(ip, type_of_ip, version)
     return True
@@ -239,6 +247,8 @@ def extract_ips(potential_ips, type_of_ip="address", version="any"):
         try:
             ip = validate_ip(ip, type_of_ip, version)
         except ipaddress.AddressValueError:
+            continue
+        except ValueError:
             continue
 
         if version in ("any", ip.version):
@@ -284,9 +294,7 @@ def convert_wg_to_hostname_if(transformed_wg_data):
     )
 
     for i, allowed_ip in enumerate(
-        allowed_ips := extract_ips(
-            transformed_wg_data["allowed_ips"], type_of_ip="network"
-        )
+        allowed_ips := transformed_wg_data["allowed_ips"]
     ):
         if i == len(allowed_ips) - 1:
             line_end = ""
@@ -294,7 +302,7 @@ def convert_wg_to_hostname_if(transformed_wg_data):
             line_end = " \\"
         hostname_if_lines.append("\t" + f"wgaip {allowed_ip}" + line_end)
 
-    for ip_addr in extract_ips(transformed_wg_data["address"]):
+    for ip_addr in transformed_wg_data["address"]:
         if ip_addr.version == 4:
             ifconfig_arg = "inet"
         elif ip_addr.version == 6:
