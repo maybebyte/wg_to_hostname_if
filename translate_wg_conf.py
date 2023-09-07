@@ -288,8 +288,7 @@ def validate_wg_data(transformed_wg_data: dict) -> dict:
 
 def convert_wg_to_hostname_if(transformed_wg_data: dict) -> list:
     """
-    Given transformed WireGuard data and a dictionary containing
-    the ifconfig argument each option maps to, create a list of
+    Given transformed WireGuard data, create a list of
     strings in hostname.if(5) format and return the list.
     """
     hostname_if_lines = []
