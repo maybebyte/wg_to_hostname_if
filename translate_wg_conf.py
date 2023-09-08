@@ -20,10 +20,10 @@ Takes a WireGuard configuration file in INI format.
 Translates it to hostname.if(5) format.
 """
 
+import argparse
 from base64 import b64decode
 import configparser
 import ipaddress
-import sys
 
 NAME_TO_SECTION_AND_OPTION = {
     "address": ("Interface", "Address"),
@@ -317,16 +317,15 @@ def convert_wg_to_hostname_if(transformed_wg_data: dict) -> list:
 
 
 if __name__ == "__main__":
-    try:
-        INI_FILE = sys.argv[1]
-    except IndexError:
-        print(
-            f"{sys.argv[0]} needs a WireGuard configuration file.",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+    argparser = argparse.ArgumentParser(
+        description="""
+Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
+""",
+    )
+    argparser.add_argument("filename")
+    args = argparser.parse_args()
 
-    wg_ini_parser = init_ini_parser(INI_FILE)
+    wg_ini_parser = init_ini_parser(args.filename)
     wg_data = names_to_data(wg_ini_parser, NAME_TO_SECTION_AND_OPTION)
     new_wg_data = transform_wg_data(wg_data)
 
