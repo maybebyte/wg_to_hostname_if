@@ -161,8 +161,7 @@ def validate_wg_key(key: str, key_name="Key") -> bool:
 
 def validate_ip(potential_ip: str, type_of_ip="address", version="any"):
     """
-    Given a potential IP, validate it and make sure it matches any
-    other specified criteria.
+    Given a potential IP, validate it.
 
     If type_of_ip is provided, validate_ip will only consider a
     particular kind of IP valid. Types include:
@@ -293,31 +292,25 @@ def convert_wg_to_hostname_if(transformed_wg_data: dict) -> list:
     """
     hostname_if_lines = []
 
-    hostname_if_lines.append("wgkey " + transformed_wg_data["private_key"])
+    hostname_if_lines.append(f'wgkey {transformed_wg_data["private_key"]}')
+    hostname_if_lines.append(f'wgpeer {transformed_wg_data["public_key"]} \\')
     hostname_if_lines.append(
-        "wgpeer " + transformed_wg_data["public_key"] + " \\"
-    )
-    hostname_if_lines.append(
-        "\t"
-        + "wgendpoint "
-        + " ".join(transformed_wg_data["endpoint"])
-        + " \\"
+        "\t" + f'wgendpoint {" ".join(transformed_wg_data["endpoint"])} \\'
     )
 
     for i, allowed_ip in enumerate(
         allowed_ips := transformed_wg_data["allowed_ips"]
     ):
-        if i == len(allowed_ips) - 1:
-            line_end = ""
-        else:
-            line_end = " \\"
-        hostname_if_lines.append("\t" + f"wgaip {allowed_ip}" + line_end)
+        line_end = "" if i == len(allowed_ips) - 1 else " \\"
+        hostname_if_lines.append("\t" + f"wgaip {allowed_ip} {line_end}")
 
     for ip_addr in transformed_wg_data["address"]:
         if ip_addr.version == 4:
             ifconfig_arg = "inet"
         elif ip_addr.version == 6:
             ifconfig_arg = "inet6"
+        else:
+            raise ipaddress.AddressValueError
         hostname_if_lines.append(f"{ifconfig_arg} {ip_addr}")
 
     return hostname_if_lines
