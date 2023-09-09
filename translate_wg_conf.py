@@ -341,6 +341,12 @@ Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
         nargs="?",
         default=sys.stdin,
     )
+    argparser.add_argument(
+        "-r",
+        help="Also print route(8) commands to install default routes.",
+        action="store_true",
+        dest="ADD_ROUTES",
+    )
     arguments = argparser.parse_args()
 
     return arguments
@@ -356,3 +362,18 @@ if __name__ == "__main__":
 
     for wg_line in convert_wg_to_hostname_if(new_wg_data):
         print(wg_line)
+
+    if args.ADD_ROUTES:
+        for route_ip in new_wg_data["address"]:
+            if route_ip.version == 4:
+                IP_VER = "inet"
+            elif route_ip.version == 6:
+                IP_VER = "inet6"
+            else:
+                raise ipaddress.AddressValueError
+            print(
+                # On OpenBSD 7.3, route(8) fails to install a default
+                # route if the IP is in CIDR format due to EFAULT. So,
+                # make sure we use a bare IP instead.
+                f"!/sbin/route -qn add -{IP_VER} default {route_ip.ip}"
+            )
