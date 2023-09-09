@@ -24,6 +24,8 @@ import argparse
 from base64 import b64decode
 import configparser
 import ipaddress
+import sys
+from typing import TextIO
 
 NAME_TO_SECTION_AND_OPTION = {
     "address": ("Interface", "Address"),
@@ -56,16 +58,24 @@ def to_bytes(bytes_or_str):
     return value
 
 
-def init_ini_parser(ini_file_path: str) -> configparser.ConfigParser:
+def init_ini_parser(
+    ini_file: str | TextIO,
+) -> configparser.ConfigParser:
     """
     Receives an INI configuration file as an argument.
 
     Opens the file, reads it, and returns the appropriate
     configparser.ConfigParser instance.
     """
-    with open(file=ini_file_path, mode="r", encoding="utf-8") as f:
-        ini_parser = configparser.ConfigParser()
-        ini_parser.read_file(f)
+    ini_parser = configparser.ConfigParser()
+    if ini_file == "-":
+        ini_file = sys.stdin
+
+    if ini_file is sys.stdin:
+        ini_parser.read_file(ini_file)
+    else:
+        ini_parser.read(ini_file)
+
     return ini_parser
 
 
@@ -91,7 +101,7 @@ def names_to_data(
     name_to_data = {}
 
     for name, (section, option) in name_to_section_and_option.items():
-        name_to_data[name] = wg_ini_parser.get(section, option)
+        name_to_data[name] = ini_parser.get(section, option)
 
     return name_to_data
 
@@ -327,7 +337,9 @@ Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
     )
     argparser.add_argument(
         "filename",
-        help="Path to a WireGuard configuration file.",
+        help="Path to WireGuard configuration file (STDIN if absent).",
+        nargs="?",
+        default=sys.stdin,
     )
     arguments = argparser.parse_args()
 
