@@ -112,7 +112,7 @@ def transform_wg_data(wg_config_data: dict) -> dict:
     INI options as the keys and their associated data as the values.
 
     Performs processing on them such that the values for these names
-    are different:
+    become updated with the following:
 
     "endpoint": list containing an IP address and a network port
     "allowed_ips": list containing IP networks/addresses allowed by the
@@ -171,7 +171,7 @@ def validate_wg_key(key: str, key_name: str = "Key") -> bool:
 
 def validate_ip(
     potential_ip: str, type_of_ip: str = "address", version: str | int = "any"
-):
+) -> ipaddress.IPv4Interface | ipaddress.IPv6Interface:
     """
     Given a potential IP, validate it.
 
@@ -284,9 +284,9 @@ def extract_ips(
     return ips
 
 
-def validate_wg_data(transformed_wg_data: dict) -> dict:
+def validate_wg_data(transformed_wg_data: dict) -> bool:
     """
-    Validates transformed WireGuard data and returns it on success.
+    Validates transformed WireGuard data and returns True on success.
     """
     validate_wg_key(transformed_wg_data["private_key"], key_name="PrivateKey")
     validate_wg_key(transformed_wg_data["public_key"], key_name="PublicKey")
@@ -298,7 +298,7 @@ def validate_wg_data(transformed_wg_data: dict) -> dict:
     validate_ip(endpoint_ip)
     validate_network_port(endpoint_port)
 
-    return transformed_wg_data
+    return True
 
 
 def convert_wg_to_hostname_if(transformed_wg_data: dict) -> list:
