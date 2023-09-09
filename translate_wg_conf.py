@@ -36,7 +36,7 @@ NAME_TO_SECTION_AND_OPTION = {
 }
 
 
-def to_str(bytes_or_str):
+def to_str(bytes_or_str: str | bytes) -> str:
     """
     Given a str or bytes instance, return a string instance.
     """
@@ -47,7 +47,7 @@ def to_str(bytes_or_str):
     return value
 
 
-def to_bytes(bytes_or_str):
+def to_bytes(bytes_or_str: str | bytes) -> bytes:
     """
     Given a str or bytes instance, return a bytes instance.
     """
@@ -152,7 +152,7 @@ def validate_network_port(port: int) -> int:
     return port
 
 
-def validate_wg_key(key: str, key_name="Key") -> bool:
+def validate_wg_key(key: str, key_name: str = "Key") -> bool:
     """
     Validate the provided WireGuard key.
 
@@ -169,7 +169,9 @@ def validate_wg_key(key: str, key_name="Key") -> bool:
     return True
 
 
-def validate_ip(potential_ip: str, type_of_ip="address", version="any"):
+def validate_ip(
+    potential_ip: str, type_of_ip: str = "address", version: str | int = "any"
+):
     """
     Given a potential IP, validate it.
 
@@ -217,7 +219,9 @@ def validate_ip(potential_ip: str, type_of_ip="address", version="any"):
 
 
 def validate_ips(
-    potential_ips: list, type_of_ip="address", version="any"
+    potential_ips: list,
+    type_of_ip: str = "address",
+    version: str | int = "any",
 ) -> bool:
     """
     Iterates through a list of IPs and validates them the way
@@ -241,7 +245,9 @@ def validate_ips(
 
 
 def extract_ips(
-    potential_ips: list, type_of_ip="address", version="any"
+    potential_ips: list,
+    type_of_ip: str = "address",
+    version: str | int = "any",
 ) -> list:
     """
     Searches a list for IPs.
