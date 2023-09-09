@@ -96,7 +96,7 @@ def names_to_data(
     are the corresponding data.
     """
     if not isinstance(ini_parser, configparser.ConfigParser):
-        raise SystemExit("Expected configparser.ConfigParser instance.")
+        raise TypeError("Expected configparser.ConfigParser instance.")
 
     name_to_data = {}
 
@@ -191,9 +191,9 @@ def validate_ip(potential_ip: str, type_of_ip="address", version="any"):
     type_of_ip.
     """
     if type_of_ip not in ("address", "network", "any"):
-        raise SystemExit('type_of_ip must be "address", "network", or "any"')
+        raise ValueError('type_of_ip must be "address", "network", or "any"')
     if version not in (4, 6, "any"):
-        raise SystemExit('version must be 4, 6, or "any"')
+        raise ValueError('version must be 4, 6, or "any"')
 
     validated_ip = ipaddress.ip_interface(potential_ip)
 
