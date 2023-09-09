@@ -318,7 +318,7 @@ def convert_wg_to_hostname_if(transformed_wg_data: dict) -> list:
         allowed_ips := transformed_wg_data["allowed_ips"]
     ):
         line_end = "" if i == len(allowed_ips) - 1 else " \\"
-        hostname_if_lines.append("\t" + f"wgaip {allowed_ip} {line_end}")
+        hostname_if_lines.append("\t" + f"wgaip {allowed_ip}{line_end}")
 
     for ip_addr in transformed_wg_data["address"]:
         if ip_addr.version == 4:
@@ -369,17 +369,17 @@ if __name__ == "__main__":
     for wg_line in convert_wg_to_hostname_if(new_wg_data):
         print(wg_line)
 
+    # On OpenBSD 7.3, route(8) fails to install a default route if
+    # the IP is in CIDR format due to EFAULT. So, make sure we use a
+    # bare IP instead.
+    #
+    # Also, there can only be one default route for IPv4 and IPv6.
     if args.ADD_ROUTES:
+        IP4_ROUTE_PRINTED, IP6_ROUTE_PRINTED = False, False
         for route_ip in new_wg_data["address"]:
-            if route_ip.version == 4:
-                IP_VER = "inet"
-            elif route_ip.version == 6:
-                IP_VER = "inet6"
-            else:
-                raise ipaddress.AddressValueError
-            print(
-                # On OpenBSD 7.3, route(8) fails to install a default
-                # route if the IP is in CIDR format due to EFAULT. So,
-                # make sure we use a bare IP instead.
-                f"!/sbin/route -qn add -{IP_VER} default {route_ip.ip}"
-            )
+            if route_ip.version == 4 and IP4_ROUTE_PRINTED is False:
+                print(f"!/sbin/route -qn add -inet default {route_ip.ip}")
+                IP4_ROUTE_PRINTED = True
+            elif route_ip.version == 6 and IP6_ROUTE_PRINTED is False:
+                print(f"!/sbin/route -qn add -inet6 default {route_ip.ip}")
+                IP6_ROUTE_PRINTED = True
