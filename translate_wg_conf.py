@@ -316,15 +316,26 @@ def convert_wg_to_hostname_if(transformed_wg_data: dict) -> list:
     return hostname_if_lines
 
 
-if __name__ == "__main__":
+def parse_cli_arguments() -> argparse.Namespace:
+    """
+    Parse command-line arguments.
+    """
     argparser = argparse.ArgumentParser(
         description="""
 Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
 """,
     )
-    argparser.add_argument("filename")
-    args = argparser.parse_args()
+    argparser.add_argument(
+        "filename",
+        help="Path to a WireGuard configuration file.",
+    )
+    arguments = argparser.parse_args()
 
+    return arguments
+
+
+if __name__ == "__main__":
+    args = parse_cli_arguments()
     wg_ini_parser = init_ini_parser(args.filename)
     wg_data = names_to_data(wg_ini_parser, NAME_TO_SECTION_AND_OPTION)
     new_wg_data = transform_wg_data(wg_data)
