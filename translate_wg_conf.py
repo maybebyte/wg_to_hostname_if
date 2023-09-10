@@ -268,6 +268,11 @@ def extract_ips(
     6: IPv6.
     "any": Either. The default.
     """
+    if type_of_ip not in ("address", "network", "any"):
+        raise ValueError('type_of_ip must be "address", "network", or "any"')
+    if version not in (4, 6, "any"):
+        raise ValueError('version must be 4, 6, or "any"')
+
     ips = []
 
     for ip in potential_ips:
