@@ -205,15 +205,15 @@ def validate_ip(
         )
 
     if type_of_ip == "address":
-        try:
-            validated_ip.ip
-        except Exception as e:
-            raise e
+        if validated_ip.network.num_addresses != 1:
+            raise ipaddress.AddressValueError(
+                f"{validated_ip} is a network and type_of_ip was address."
+            )
     elif type_of_ip == "network":
-        try:
-            validated_ip.network
-        except Exception as e:
-            raise e
+        if validated_ip.network.num_addresses == 1:
+            raise ipaddress.AddressValueError(
+                f"{validated_ip} is an IP and type_of_ip was network."
+            )
 
     return validated_ip
 
@@ -279,8 +279,6 @@ def extract_ips(
         try:
             ip = validate_ip(ip, type_of_ip, version)
         except ipaddress.AddressValueError:
-            continue
-        except ValueError:
             continue
 
         if version in ("any", ip.version):
