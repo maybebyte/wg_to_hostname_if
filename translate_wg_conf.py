@@ -280,6 +280,8 @@ def extract_ips(
             ip = validate_ip(ip, type_of_ip, version)
         except ipaddress.AddressValueError:
             continue
+        except ValueError:
+            continue
 
         if version in ("any", ip.version):
             ips.append(ip)
