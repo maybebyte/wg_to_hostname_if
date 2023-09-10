@@ -353,12 +353,29 @@ Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
         default=sys.stdin,
     )
     argparser.add_argument(
+        "-t",
+        help="Also print a wgrtable entry. See ifconfig(8) and rtable(4).",
+        dest="ADD_WGRTABLE",
+        type=int,
+    )
+    argparser.add_argument(
         "-r",
         help="Also print route(8) commands to install default routes.",
         action="store_true",
         dest="ADD_ROUTES",
     )
     arguments = argparser.parse_args()
+
+    # The `is not None` check is here because we also want to catch
+    # 0 (there's no point in specifying `-t 0` since an rtable of 0
+    # is the default). It seems better to be explicit rather than
+    # appearing to accept the value, only to do nothing with it.
+    if (
+        arguments.ADD_WGRTABLE is not None
+        and not 1 <= arguments.ADD_WGRTABLE <= 255
+    ):
+        print("wgrtable must be from 1-255.", file=sys.stderr)
+        sys.exit(1)
 
     return arguments
 
@@ -373,6 +390,9 @@ if __name__ == "__main__":
 
     for wg_line in convert_wg_to_hostname_if(new_wg_data):
         print(wg_line)
+
+    if args.ADD_WGRTABLE:
+        print(f"wgrtable {args.ADD_WGRTABLE}")
 
     # On OpenBSD 7.3, route(8) fails to install a default route if
     # the IP is in CIDR format due to EFAULT. So, make sure we use a
