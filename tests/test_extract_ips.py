@@ -14,7 +14,7 @@ potential_ips = [
     "192.168.0.1",
     "192.168.0.1/32",
     # ip4 networks
-    "10.0.0.0/24",
+    "10.0.0.0/8",
     # ip6 addresses
     "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
     "2001:0db8:85a3:0000:0000:8a2e:0370:7334/128",
@@ -38,14 +38,14 @@ def test_type_of_ip():
     )
 
     assert extract_ips(potential_ips, type_of_ip="network") == [
-        ipaddress.ip_interface("10.0.0.0/24"),
+        ipaddress.ip_interface("10.0.0.0/8"),
         ipaddress.ip_interface("2001:0db8:85a3::/64"),
     ]
 
     assert extract_ips(potential_ips, type_of_ip="any") == [
         ipaddress.ip_interface("192.168.0.1"),
         ipaddress.ip_interface("192.168.0.1/32"),
-        ipaddress.ip_interface("10.0.0.0/24"),
+        ipaddress.ip_interface("10.0.0.0/8"),
         ipaddress.ip_interface("2001:0db8:85a3:0000:0000:8a2e:0370:7334"),
         ipaddress.ip_interface("2001:0db8:85a3:0000:0000:8a2e:0370:7334/128"),
         ipaddress.ip_interface("2001:0db8:85a3::/64"),
@@ -65,6 +65,16 @@ def test_version():
     assert extract_ips(potential_ips, version=6) == [
         ipaddress.ip_interface("2001:0db8:85a3:0000:0000:8a2e:0370:7334"),
         ipaddress.ip_interface("2001:0db8:85a3:0000:0000:8a2e:0370:7334/128"),
+    ]
+
+
+def test_mixed():
+    assert extract_ips(potential_ips, version=4, type_of_ip="network") == [
+        ipaddress.ip_interface("10.0.0.0/8"),
+    ]
+
+    assert extract_ips(potential_ips, version=6, type_of_ip="network") == [
+        ipaddress.ip_interface("2001:0db8:85a3::/64"),
     ]
 
 
