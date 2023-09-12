@@ -152,7 +152,7 @@ def validate_network_port(port: int) -> int:
     return port
 
 
-def validate_wg_key(key: str, key_name: str = "Key") -> bool:
+def validate_wg_key(key: str | bytes, key_name: str = "Key") -> bool:
     """
     Validate the provided WireGuard key.
 
