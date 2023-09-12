@@ -348,7 +348,7 @@ Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
     )
     argparser.add_argument(
         "filename",
-        help="Path to WireGuard configuration file (STDIN if absent).",
+        help="Path to WireGuard configuration file (STDIN if absent or '-').",
         nargs="?",
         default=sys.stdin,
     )
@@ -362,6 +362,7 @@ Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
         "-t",
         help="Also print a wgrtable entry. See ifconfig(8) and rtable(4).",
         dest="ADD_WGRTABLE",
+        metavar="rtable",
         type=int,
     )
     arguments = argparser.parse_args()
