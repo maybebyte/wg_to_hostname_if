@@ -23,7 +23,7 @@ potential_ips = [
 ]
 
 
-def test_extract_ips_base():
+def test_base():
     assert extract_ips(potential_ips) == [
         ipaddress.ip_interface("192.168.0.1"),
         ipaddress.ip_interface("192.168.0.1/32"),
@@ -32,7 +32,7 @@ def test_extract_ips_base():
     ]
 
 
-def test_extract_ips_type_of_ip():
+def test_type_of_ip():
     assert extract_ips(potential_ips) == extract_ips(
         potential_ips, type_of_ip="address"
     )
@@ -52,7 +52,7 @@ def test_extract_ips_type_of_ip():
     ]
 
 
-def test_extract_ips_version():
+def test_version():
     assert extract_ips(potential_ips) == extract_ips(
         potential_ips, version="any"
     )
@@ -68,7 +68,7 @@ def test_extract_ips_version():
     ]
 
 
-def test_extract_ips_exceptions():
+def test_exceptions():
     with pytest.raises(ValueError):
         extract_ips(potential_ips, type_of_ip="invalid_type")
 
@@ -76,7 +76,7 @@ def test_extract_ips_exceptions():
         extract_ips(potential_ips, version="invalid_version")
 
 
-def test_extract_ips_skips_invalid():
+def test_skips_invalid():
     assert extract_ips(["192.168.0.1", "invalid_ip"]) == [
         ipaddress.ip_interface("192.168.0.1")
     ]
