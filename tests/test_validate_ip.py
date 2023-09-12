@@ -89,6 +89,18 @@ def test_mismatched_version():
         validate_ip(ip, version=6)
 
 
+def test_mismatched_address():
+    ip = "192.168.0.0/16"
+    with pytest.raises(ipaddress.AddressValueError):
+        validate_ip(ip, type_of_ip="address")
+
+
+def test_mismatched_network():
+    ip = "192.168.0.1"
+    with pytest.raises(ipaddress.AddressValueError):
+        validate_ip(ip, type_of_ip="network")
+
+
 def test_invalid_type():
     ip = "192.168.0.1"
     with pytest.raises(ValueError):
@@ -99,15 +111,3 @@ def test_invalid_version():
     ip = "192.168.0.1"
     with pytest.raises(ValueError):
         validate_ip(ip, version=5)
-
-
-def test_invalid_address():
-    ip = "192.168.0.0/16"
-    with pytest.raises(ipaddress.AddressValueError):
-        validate_ip(ip, type_of_ip="address")
-
-
-def test_invalid_network():
-    ip = "192.168.0.1"
-    with pytest.raises(ipaddress.AddressValueError):
-        validate_ip(ip, type_of_ip="network")
