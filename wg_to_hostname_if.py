@@ -91,8 +91,9 @@ def init_ini_parser(
 
 
 def names_to_data(
-    ini_parser: configparser.ConfigParser, name_to_section_and_option: dict
-) -> dict:
+    ini_parser: configparser.ConfigParser,
+    name_to_section_and_option: dict[str, tuple[str, str]],
+) -> dict[str, str]:
     """
     ini_parser: a configparser.ConfigParser() instance.
 
