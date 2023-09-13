@@ -203,9 +203,6 @@ def validate_ip(
     4: IPv4.
     6: IPv6.
     "any": Either. The default.
-
-    Returns the appropriate ipaddress object based on the value of
-    type_of_ip.
     """
     if type_of_ip not in ("address", "network", "any"):
         raise ValueError('type_of_ip must be "address", "network", or "any"')
