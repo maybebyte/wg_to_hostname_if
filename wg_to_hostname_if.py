@@ -118,7 +118,9 @@ def names_to_data(
     return name_to_data
 
 
-def transform_wg_data(wg_config_data: dict) -> dict:
+def transform_wg_data(
+    wg_config_data: dict[str, str],
+) -> dict:
     """
     Receives a dictionary containing lowercase names of WireGuard
     INI options as the keys and their associated data as the values.
@@ -134,19 +136,20 @@ def transform_wg_data(wg_config_data: dict) -> dict:
     Returns a dictionary using the same key names, but with updated
     data.
     """
-    new_config_data = wg_config_data
-
     endpoint = split_and_strip(wg_config_data["endpoint"], ":")
     allowed_ips = split_and_strip(wg_config_data["allowed_ips"], ",")
     address = split_and_strip(wg_config_data["address"], ",")
 
-    new_config_data["endpoint"] = endpoint
+    # Type checkers will complain without a type annotation here.
+    new_config_data: dict = {}
 
+    new_config_data["private_key"] = wg_config_data["private_key"]
+    new_config_data["public_key"] = wg_config_data["public_key"]
+    new_config_data["endpoint"] = endpoint
     new_config_data["allowed_ips"] = extract_ips(
         allowed_ips,
         type_of_ip="network",
     )
-
     new_config_data["address"] = extract_ips(address)
 
     return new_config_data
