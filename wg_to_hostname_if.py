@@ -367,6 +367,13 @@ Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
         default=sys.stdin,
     )
     argparser.add_argument(
+        "-m",
+        help="Also print an `mtu` line.",
+        dest="ADD_MTU",
+        metavar="mtu",
+        type=int,
+    )
+    argparser.add_argument(
         "-r",
         help="Also print route(8) commands to install default routes.",
         action="store_true",
@@ -392,6 +399,13 @@ Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
         print("wgrtable must be from 1-255.", file=sys.stderr)
         sys.exit(1)
 
+    # Numbers are taken from sys/net/if_wg.c:
+    # if (ifr->ifr_mtu <= 0 || ifr->ifr_mtu > 9000)
+    #     ret = EINVAL;
+    if arguments.ADD_MTU is not None and not 1 <= arguments.ADD_MTU <= 9000:
+        print("mtu must be from 1-9000.", file=sys.stderr)
+        sys.exit(1)
+
     return arguments
 
 
@@ -405,6 +419,9 @@ if __name__ == "__main__":
 
     for wg_line in convert_wg_to_hostname_if(new_wg_data):
         print(wg_line)
+
+    if args.ADD_MTU:
+        print(f"mtu {args.ADD_MTU}")
 
     if args.ADD_WGRTABLE:
         print(f"wgrtable {args.ADD_WGRTABLE}")
