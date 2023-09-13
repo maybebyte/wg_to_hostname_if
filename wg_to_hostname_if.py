@@ -58,6 +58,17 @@ def to_bytes(bytes_or_str: str | bytes) -> bytes:
     return value
 
 
+def split_and_strip(string_to_split: str, separator: str) -> list[str]:
+    """
+    Given a string to split and a separator, return the list of
+    strings that would be given by str.split(), except that each
+    string in the list is stripped of leading and trailing whitespace.
+    """
+    return [
+        substring.strip() for substring in string_to_split.split(separator)
+    ]
+
+
 def init_ini_parser(
     ini_file: str | TextIO,
 ) -> configparser.ConfigParser:
@@ -124,15 +135,18 @@ def transform_wg_data(wg_config_data: dict) -> dict:
     """
     new_config_data = wg_config_data
 
-    new_config_data["endpoint"] = new_config_data["endpoint"].split(":")
+    endpoint = split_and_strip(wg_config_data["endpoint"], ":")
+    allowed_ips = split_and_strip(wg_config_data["allowed_ips"], ",")
+    address = split_and_strip(wg_config_data["address"], ",")
+
+    new_config_data["endpoint"] = endpoint
 
     new_config_data["allowed_ips"] = extract_ips(
-        new_config_data["allowed_ips"].split(","), type_of_ip="network"
+        allowed_ips,
+        type_of_ip="network",
     )
 
-    new_config_data["address"] = extract_ips(
-        new_config_data["address"].split(",")
-    )
+    new_config_data["address"] = extract_ips(address)
 
     return new_config_data
 
