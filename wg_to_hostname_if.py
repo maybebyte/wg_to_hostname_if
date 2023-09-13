@@ -321,7 +321,7 @@ def validate_wg_data(transformed_wg_data: dict) -> bool:
     return True
 
 
-def convert_wg_to_hostname_if(transformed_wg_data: dict) -> list:
+def convert_wg_to_hostname_if(transformed_wg_data: dict) -> list[str]:
     """
     Given transformed WireGuard data, create a list of
     strings in hostname.if(5) format and return the list.
