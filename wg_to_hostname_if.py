@@ -257,10 +257,10 @@ def validate_ips(
 
 
 def extract_ips(
-    potential_ips: list,
+    potential_ips: list[str],
     type_of_ip: str = "address",
     version: str | int = "any",
-) -> list:
+) -> list[ipaddress.IPv4Interface | ipaddress.IPv6Interface]:
     """
     Searches a list for IPs.
 
@@ -287,16 +287,16 @@ def extract_ips(
 
     ips = []
 
-    for ip in potential_ips:
+    for potential_ip in potential_ips:
         try:
-            ip = validate_ip(ip, type_of_ip, version)
+            valid_ip = validate_ip(potential_ip, type_of_ip, version)
         except ipaddress.AddressValueError:
             continue
         except ValueError:
             continue
 
-        if version in ("any", ip.version):
-            ips.append(ip)
+        if version in ("any", valid_ip.version):
+            ips.append(valid_ip)
 
     return ips
 
