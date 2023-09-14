@@ -368,7 +368,7 @@ Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
     argparser.add_argument(
         "-m",
         help="Also print an `mtu` line.",
-        dest="ADD_MTU",
+        dest="MTU",
         metavar="mtu",
         type=int,
     )
@@ -381,7 +381,7 @@ Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
     argparser.add_argument(
         "-t",
         help="Also print a wgrtable entry. See ifconfig(8) and rtable(4).",
-        dest="ADD_WGRTABLE",
+        dest="WGRTABLE",
         metavar="rtable",
         type=int,
     )
@@ -392,8 +392,8 @@ Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
     # is the default). It seems better to be explicit rather than
     # appearing to accept the value, only to do nothing with it.
     if (
-        arguments.ADD_WGRTABLE is not None
-        and not 1 <= arguments.ADD_WGRTABLE <= 255
+        arguments.WGRTABLE is not None
+        and not 1 <= arguments.WGRTABLE <= 255
     ):
         print("wgrtable must be from 1-255.", file=sys.stderr)
         sys.exit(1)
@@ -401,7 +401,7 @@ Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
     # Numbers are taken from sys/net/if_wg.c:
     # if (ifr->ifr_mtu <= 0 || ifr->ifr_mtu > 9000)
     #     ret = EINVAL;
-    if arguments.ADD_MTU is not None and not 1 <= arguments.ADD_MTU <= 9000:
+    if arguments.MTU is not None and not 1 <= arguments.MTU <= 9000:
         print("mtu must be from 1-9000.", file=sys.stderr)
         sys.exit(1)
 
@@ -419,11 +419,11 @@ if __name__ == "__main__":
     for wg_line in convert_wg_to_hostname_if(new_wg_data):
         print(wg_line)
 
-    if args.ADD_MTU:
-        print(f"mtu {args.ADD_MTU}")
+    if args.MTU:
+        print(f"mtu {args.MTU}")
 
-    if args.ADD_WGRTABLE:
-        print(f"wgrtable {args.ADD_WGRTABLE}")
+    if args.WGRTABLE:
+        print(f"wgrtable {args.WGRTABLE}")
 
     # On OpenBSD 7.3, route(8) fails to install a default route if
     # the IP is in CIDR format due to EFAULT. So, make sure we use a

@@ -13,18 +13,18 @@ def test_parse_cli_arguments(monkeypatch):
     )
     arguments = parse_cli_arguments()
     assert arguments.filename == "tests/test.ini"
-    assert arguments.ADD_MTU == 1500
+    assert arguments.MTU == 1500
     assert arguments.ADD_ROUTES is False
-    assert arguments.ADD_WGRTABLE == 10
+    assert arguments.WGRTABLE == 10
 
 
 def test_parse_cli_arguments_no_args(monkeypatch):
     monkeypatch.setattr("sys.argv", ["script.py"])
     arguments = parse_cli_arguments()
     assert arguments.filename == sys.stdin
-    assert arguments.ADD_MTU is None
+    assert arguments.MTU is None
     assert arguments.ADD_ROUTES is False
-    assert arguments.ADD_WGRTABLE is None
+    assert arguments.WGRTABLE is None
 
 
 def test_parse_cli_arguments_invalid_wgrtable(monkeypatch):
