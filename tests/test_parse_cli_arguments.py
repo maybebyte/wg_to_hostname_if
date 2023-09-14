@@ -27,6 +27,15 @@ def test_parse_cli_arguments_no_args(monkeypatch):
     assert arguments.WGRTABLE is None
 
 
+def test_parse_cli_arguments_wgrtable_0(monkeypatch):
+    monkeypatch.setattr("sys.argv", ["script.py", "-t", "0"])
+    arguments = parse_cli_arguments()
+    assert arguments.filename == sys.stdin
+    assert arguments.MTU is None
+    assert arguments.ADD_ROUTES is False
+    assert arguments.WGRTABLE == 0
+
+
 def test_parse_cli_arguments_invalid_wgrtable(monkeypatch):
     monkeypatch.setattr("sys.argv", ["script.py", "-t", "256"])
     with pytest.raises(SystemExit) as system_exit:

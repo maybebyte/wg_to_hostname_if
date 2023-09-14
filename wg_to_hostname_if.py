@@ -387,15 +387,13 @@ Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
     )
     arguments = argparser.parse_args()
 
-    # The `is not None` check is here because we also want to catch
-    # 0 (there's no point in specifying `-t 0` since an rtable of 0
-    # is the default). It seems better to be explicit rather than
-    # appearing to accept the value, only to do nothing with it.
+    # Accept 0 here. `wgrtable 0` may sometimes be needed when the
+    # default rtable isn't 0, see login.conf(5).
     if (
         arguments.WGRTABLE is not None
-        and not 1 <= arguments.WGRTABLE <= 255
+        and not 0 <= arguments.WGRTABLE <= 255
     ):
-        print("wgrtable must be from 1-255.", file=sys.stderr)
+        print("wgrtable must be from 0-255.", file=sys.stderr)
         sys.exit(1)
 
     # Numbers are taken from sys/net/if_wg.c:
@@ -422,7 +420,7 @@ if __name__ == "__main__":
     if args.MTU:
         print(f"mtu {args.MTU}")
 
-    if args.WGRTABLE:
+    if args.WGRTABLE is not None:
         print(f"wgrtable {args.WGRTABLE}")
 
     # On OpenBSD 7.3, route(8) fails to install a default route if
