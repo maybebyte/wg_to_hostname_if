@@ -38,6 +38,11 @@ def test_wgrtable_0(monkeypatch):
 
 
 def test_invalid_wgrtable(monkeypatch):
+    monkeypatch.setattr("sys.argv", ["script.py", "-t", "-1"])
+    with pytest.raises(SystemExit) as system_exit:
+        parse_cli_arguments()
+        assert system_exit.value.code == 1
+
     monkeypatch.setattr("sys.argv", ["script.py", "-t", "256"])
     with pytest.raises(SystemExit) as system_exit:
         parse_cli_arguments()
@@ -45,6 +50,11 @@ def test_invalid_wgrtable(monkeypatch):
 
 
 def test_invalid_mtu(monkeypatch):
+    monkeypatch.setattr("sys.argv", ["script.py", "-m", "0"])
+    with pytest.raises(SystemExit) as system_exit:
+        parse_cli_arguments()
+        assert system_exit.value.code == 1
+
     monkeypatch.setattr("sys.argv", ["script.py", "-m", "10000"])
     with pytest.raises(SystemExit) as system_exit:
         parse_cli_arguments()
