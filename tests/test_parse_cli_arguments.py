@@ -7,7 +7,7 @@ import pytest
 from wg_to_hostname_if import parse_cli_arguments
 
 
-def test_parse_cli_arguments(monkeypatch):
+def test_base(monkeypatch):
     monkeypatch.setattr(
         "sys.argv",
         ["script.py", "-m", "1500", "-r", "-t", "10", "tests/test.ini"],
@@ -19,7 +19,7 @@ def test_parse_cli_arguments(monkeypatch):
     assert arguments.WGRTABLE == 10
 
 
-def test_parse_cli_arguments_no_args(monkeypatch):
+def test_no_args(monkeypatch):
     monkeypatch.setattr("sys.argv", ["script.py"])
     arguments = parse_cli_arguments()
     assert arguments.filename == sys.stdin
@@ -28,7 +28,7 @@ def test_parse_cli_arguments_no_args(monkeypatch):
     assert arguments.WGRTABLE is None
 
 
-def test_parse_cli_arguments_wgrtable_0(monkeypatch):
+def test_wgrtable_0(monkeypatch):
     monkeypatch.setattr("sys.argv", ["script.py", "-t", "0"])
     arguments = parse_cli_arguments()
     assert arguments.filename == sys.stdin
@@ -37,14 +37,14 @@ def test_parse_cli_arguments_wgrtable_0(monkeypatch):
     assert arguments.WGRTABLE == 0
 
 
-def test_parse_cli_arguments_invalid_wgrtable(monkeypatch):
+def test_invalid_wgrtable(monkeypatch):
     monkeypatch.setattr("sys.argv", ["script.py", "-t", "256"])
     with pytest.raises(SystemExit) as system_exit:
         parse_cli_arguments()
         assert system_exit.value.code == 1
 
 
-def test_parse_cli_arguments_invalid_mtu(monkeypatch):
+def test_invalid_mtu(monkeypatch):
     monkeypatch.setattr("sys.argv", ["script.py", "-m", "10000"])
     with pytest.raises(SystemExit) as system_exit:
         parse_cli_arguments()
