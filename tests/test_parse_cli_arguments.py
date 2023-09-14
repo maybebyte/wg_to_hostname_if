@@ -10,13 +10,13 @@ from wg_to_hostname_if import parse_cli_arguments
 def test_base(monkeypatch):
     monkeypatch.setattr(
         "sys.argv",
-        ["script.py", "-m", "1500", "-r", "-t", "10", "tests/test.ini"],
+        ["script.py", "-m", "1412", "-r", "-t", "1", "tests/test.ini"],
     )
     arguments = parse_cli_arguments()
     assert arguments.filename == "tests/test.ini"
-    assert arguments.MTU == 1500
+    assert arguments.MTU == 1412
     assert arguments.ADD_ROUTES is True
-    assert arguments.WGRTABLE == 10
+    assert arguments.WGRTABLE == 1
 
 
 def test_no_args(monkeypatch):
