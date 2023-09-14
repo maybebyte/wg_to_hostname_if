@@ -42,9 +42,7 @@ inet6 fd12:3456:789a:1::1/128
 ## TODOs
 
 - Testing each function with pytest. These remain:
-  - `init_ini_parser`
   - `validate_wg_data`
-  - `parse_cli_arguments`
 - Documentation:
   - man page.
   - README.md
