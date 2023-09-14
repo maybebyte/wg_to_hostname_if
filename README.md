@@ -1,6 +1,6 @@
-# wg_hostname_to_if
+# wg_to_hostname_if
 
-`wg_hostname_to_if` translates WireGuard configuration files to
+`wg_to_hostname_if` translates WireGuard configuration files to
 OpenBSD's hostname.if(5) format. Specifically, it deals with client
 configuration files. It also performs some validation to ensure that
 each option in each section is set to a reasonable value.
