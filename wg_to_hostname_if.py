@@ -58,14 +58,14 @@ def to_bytes(bytes_or_str: str | bytes) -> bytes:
     return value
 
 
-def split_and_strip(string_to_split: str, separator: str) -> list[str]:
+def split_and_strip(string: str, separator: str) -> list[str]:
     """
     Given a string to split and a separator, return the list of
     strings that would be given by str.split(), except that each
     string in the list is stripped of leading and trailing whitespace.
     """
     return [
-        substring.strip() for substring in string_to_split.split(separator)
+        substring.strip() for substring in string.split(separator)
     ]
 
 
