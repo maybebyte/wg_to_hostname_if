@@ -41,8 +41,6 @@ inet6 fd12:3456:789a:1::1/128
 
 ## TODOs
 
-- Testing each function with pytest. These remain:
-  - `validate_wg_data`
 - Documentation:
   - man page.
   - README.md
