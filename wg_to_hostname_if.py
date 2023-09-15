@@ -448,8 +448,21 @@ def validate_wg_data(transformed_wg_data: dict) -> bool:
 
 def convert_wg_to_hostname_if(transformed_wg_data: dict) -> list[str]:
     """
-    Given transformed WireGuard data, create a list of
-    strings in hostname.if(5) format and return the list.
+    Converts transformed WireGuard data to a list of hostname.if(5)
+    lines.
+
+    Args:
+        transformed_wg_data:
+        A dictionary containing the transformed WireGuard data.
+
+    Returns:
+        list[str]:
+        A list of hostname.if lines.
+
+    Raises:
+        ipaddress.AddressValueError:
+        If an ipaddress.ip_interface object with a version other
+        than 4 or 6 is encountered.
     """
     hostname_if_lines = []
 
