@@ -49,7 +49,14 @@ def to_str(bytes_or_str: str | bytes) -> str:
 
 def to_bytes(bytes_or_str: str | bytes) -> bytes:
     """
-    Given a str or bytes instance, return a bytes instance.
+    Converts a string or bytes object to bytes.
+
+    Args:
+        bytes_or_str:
+        The input string or bytes object to be converted.
+
+    Returns:
+        The converted bytes object.
     """
     if isinstance(bytes_or_str, str):
         value = bytes_or_str.encode("utf-8")
