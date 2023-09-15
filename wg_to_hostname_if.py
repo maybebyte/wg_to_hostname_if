@@ -492,7 +492,16 @@ def convert_wg_to_hostname_if(transformed_wg_data: dict) -> list[str]:
 
 def parse_cli_arguments() -> argparse.Namespace:
     """
-    Parse command-line arguments.
+    Parses command line arguments for wg_hostname_to_if.py.
+
+    Returns:
+        argparse.Namespace:
+        An object containing the parsed command line arguments.
+
+    Exits:
+        With exit code 1 and an error message if:
+        - The provided wgrtable value is not within the range of 0-255.
+        - The provided mtu value is not within the range of 1-9000.
     """
     argparser = argparse.ArgumentParser(
         description="""
