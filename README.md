@@ -1,9 +1,10 @@
 # wg_to_hostname_if
 
 `wg_to_hostname_if` translates WireGuard configuration files to
-OpenBSD's hostname.if(5) format. Specifically, it deals with client
-configuration files. It also performs some validation to ensure that
-each option in each section is set to a reasonable value.
+OpenBSD's [hostname.if(5)](https://man.openbsd.org/hostname.if)
+format. Specifically, it deals with client configuration files. It
+also performs some validation to ensure that each option in each
+section is set to a reasonable value.
 
 This tool is still under development. It's usable as is, but consider
 the API unstable. When it's ready for public consumption, I'll
@@ -49,15 +50,16 @@ $ python3 -m pytest
 
 ## Documentation
 
-On OpenBSD, you can use `mandoc` to read the manual page provided in
-the `docs` directory.
+You can use [mandoc](https://mandoc.bsd.lv/) to read the manual
+page provided in the `docs` directory.
 
 ```shell
 $ mandoc -l docs/wg_to_hostname_if.1
 ```
 
-There is also a Markdown file generated with `mandoc` in the same
-directory for convenience.
+There is also a generated Markdown file in the same directory so
+you can [read the man page on
+GitHub](https://github.com/3uryd1ce/wg_to_hostname_if/blob/main/docs/wg_to_hostname_if.md).
 
 ## TODOs
 
