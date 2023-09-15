@@ -49,12 +49,15 @@ $ python3 -m pytest
 
 ## Documentation
 
-`wg_to_hostname_if.1` in the `man` directory. On OpenBSD, you can
-use `mandoc` to read it:
+On OpenBSD, you can use `mandoc` to read the manual page provided in
+the `docs` directory.
 
 ```shell
-$ mandoc -l man/wg_to_hostname_if.1
+$ mandoc -l docs/wg_to_hostname_if.1
 ```
+
+There is also a Markdown file generated with `mandoc` in the same
+directory for convenience.
 
 ## TODOs
 
