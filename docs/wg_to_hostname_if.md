@@ -77,7 +77,6 @@ and bring the interface up with
 netstart(8).
 
 	# wg_to_hostname_if -rt 1 wireguard-file.conf > /etc/hostname.wg0
-
 	# sh /etc/netstart wg0
 
 # SEE ALSO
@@ -102,5 +101,3 @@ will only print default route commands for the first IPv4 and IPv6
 addresses it encounters.
 
 Only client WireGuard configuration files are supported.
-
-OpenBSD 7.3 - September 15th, 2023
