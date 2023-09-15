@@ -38,7 +38,7 @@ NAME_TO_SECTION_AND_OPTION = {
 
 def to_str(bytes_or_str: str | bytes) -> str:
     """
-    Convert a bytes object or a string to a string.
+    Convert a string or bytes object to a string.
 
     Args:
         bytes_or_str:
