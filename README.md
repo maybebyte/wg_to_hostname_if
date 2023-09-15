@@ -47,6 +47,15 @@ To run tests, execute this in the root of the project directory:
 $ python3 -m pytest
 ```
 
+## Documentation
+
+`wg_to_hostname_if.1` in the `man` directory. On OpenBSD, you can
+use `mandoc` to read it:
+
+```shell
+$ mandoc -l man/wg_to_hostname_if.1
+```
+
 ## TODOs
 
 - Documentation:
