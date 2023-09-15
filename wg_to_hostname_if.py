@@ -414,7 +414,24 @@ def extract_ips(
 
 def validate_wg_data(transformed_wg_data: dict) -> bool:
     """
-    Validates transformed WireGuard data and returns True on success.
+    Validates the WireGuard data provided in the transformed_wg_data
+    dictionary.
+
+    Args:
+        transformed_wg_data:
+        A dictionary containing the transformed WireGuard data.
+
+    Returns:
+        bool:
+        True if the WireGuard data is valid.
+
+    Raises:
+        KeyError:
+        If any of the required keys are missing in the transformed_wg_data
+        dictionary.
+
+        Otherwise, the exception is determined by the specific
+        validation function that failed.
     """
     validate_wg_key(transformed_wg_data["private_key"], key_name="PrivateKey")
     validate_wg_key(transformed_wg_data["public_key"], key_name="PublicKey")
