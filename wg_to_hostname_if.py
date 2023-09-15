@@ -192,12 +192,18 @@ def transform_wg_data(
 
 def validate_network_port(port: int) -> int:
     """
-    Validate a network port with these checks:
+    Validates a network port number.
 
-    - Does int succeed?
-    - Is it contained within the range 0-65535?
+    Args:
+        port:
+        The port number to be validated.
 
-    Returns the port on success. Otherwise, it raises a ValueError.
+    Returns:
+        The validated port number.
+
+    Raises:
+        ValueError:
+        If the port number is not within the range 0-65535.
     """
     port = int(port)
     if not 0 <= port <= 65535:
