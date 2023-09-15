@@ -39,6 +39,14 @@ inet 192.168.1.23/32
 inet6 fd12:3456:789a:1::1/128
 ```
 
+## Running tests
+
+To run tests, execute this in the root of the project directory:
+
+```shell
+$ python3 -m pytest
+```
+
 ## TODOs
 
 - Documentation:
