@@ -1,0 +1,85 @@
+.Dd September 15th, 2023
+.Dt WG_TO_HOSTNAME_IF 1
+.Os
+.Sh NAME
+.Nm wg_to_hostname_if
+.Nd translate WireGuard configuration file to hostname.if(5)
+.Sh SYNOPSIS
+.Nm wg_to_hostname_if
+.Op Fl hr
+.Op Fl m Ar mtu
+.Op Fl t Ar rtable
+.Op Ar file
+.Sh DESCRIPTION
+The
+.Nm
+utility processes a WireGuard configuration
+.Ar file ,
+validating its contents and printing its
+.Xr hostname.if 5
+counterpart to standard output.
+If
+.Ar file
+is a single dash
+.Pq Sq -
+or absent,
+.Nm
+reads from the standard input.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl h
+Print usage information and exit.
+.It Fl m Ar mtu
+Add a line to the output that specifies the MTU (Maximum
+Transmission Unit) of the interface. By default, a WireGuard interface
+has an MTU of 1420.
+.It Fl r
+Add
+.Xr route 8
+commands to the output so that the WireGuard interface will hold
+the default routes.
+.It Fl t Ar rtable
+Add a wgrtable line to the output so that
+.Ar rtable
+will be used to exchange traffic between peers rather than the
+default
+.Xr rtable 4 .
+.El
+.Sh EXIT STATUS
+The
+.Nm
+utility exits 0 on success, and >0 if an error occurs.
+.Sh EXAMPLES
+Parse the WireGuard file and print the translated contents to standard
+output.
+.Pp
+.Dl $ wg_to_hostname_if wireguard-file.conf
+.Pp
+In the output, add routing commands and a line specifying that
+rtable 1 will be the routing table used to exchange traffic between
+peers. Redirect the output to
+.Ar hostname.wg0
+and bring the interface up with
+.Xr netstart 8 .
+.Pp
+.Dl # wg_to_hostname_if -rt 1 wireguard-file.conf > /etc/hostname.wg0
+.Dl # sh /etc/netstart wg0
+.Pp
+.Sh SEE ALSO
+.Xr wg 4 ,
+.Xr rtable 4 ,
+.Xr hostname.if 5 ,
+.Xr ifconfig 8 ,
+.Xr netstart 8
+.Sh AUTHORS
+Written and maintained by
+.An Ashlen Aq Mt dev@anthes.is .
+.Sh CAVEATS
+When using 
+.Fl r ,
+.Nm 
+will only print default route commands for the first IPv4 and IPv6
+addresses it encounters.
+.Pp
+Only client WireGuard configuration files are supported.

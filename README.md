@@ -42,7 +42,6 @@ inet6 fd12:3456:789a:1::1/128
 ## TODOs
 
 - Documentation:
-  - man page.
   - README.md
 - Packaging (I'm considering flit due to its relative simplicity
   compared to other solutions).
