@@ -364,23 +364,32 @@ def extract_ips(
     version: str | int = "any",
 ) -> list[ipaddress.IPv4Interface | ipaddress.IPv6Interface]:
     """
-    Searches a list for IPs.
+    Extracts valid IP addresses from a list of potential IP addresses.
 
-    Returns a new list containing the IPs it found.
+    Args:
+        potential_ips:
+        A list of potential IP addresses.
 
-    If type_of_ip is provided, extract_ips will look for a particular
-    kind of IP. Valid types include:
+        type_of_ip:
+        The type of IP to extract. Can be one of these:
+        - "address" (default)
+        - "network"
+        - "any"
 
-    "address": Look for IP addresses. The default.
-    "network": Look for network ranges.
-    "any": Look for either.
+        version:
+        The IP version to extract. Can be one of these:
+        - 4
+        - 6
+        - "any" (default)
 
-    If version is provided, extract_ips will only accept IPs with
-    a particular IP version. Versions include:
+    Returns:
+        list[ipaddress.IPv4Interface | ipaddress.IPv6Interface]:
+        A list of valid IP addresses.
 
-    4: IPv4.
-    6: IPv6.
-    "any": Either. The default.
+    Raises:
+        ValueError:
+        - If type_of_ip is not an allowed type.
+        - If version is not an allowed version.
     """
     if type_of_ip not in ("address", "network", "any"):
         raise ValueError('type_of_ip must be "address", "network", or "any"')
