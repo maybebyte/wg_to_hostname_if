@@ -73,8 +73,16 @@ def init_ini_parser(
     ini_file: str | TextIO,
 ) -> configparser.ConfigParser:
     """
-    Opens a file or file object, reads it using read or read_file,
-    and returns the associated configparser.ConfigParser instance.
+    Initialize and configure an INI parser.
+
+    Args:
+        ini_file:
+        The path to the INI file or a file-like object containing
+        the INI data.
+
+    Returns:
+        A configured instance of the configparser.ConfigParser
+        class.
     """
     ini_parser = configparser.ConfigParser()
     if ini_file == "-":
