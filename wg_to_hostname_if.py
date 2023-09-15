@@ -38,7 +38,15 @@ NAME_TO_SECTION_AND_OPTION = {
 
 def to_str(bytes_or_str: str | bytes) -> str:
     """
-    Given a str or bytes instance, return a string instance.
+    Convert a bytes object or a string to a string.
+
+    Args:
+        bytes_or_str:
+        The input to be converted. It can be either a bytes object
+        or a string.
+
+    Returns:
+        The converted string.
     """
     if isinstance(bytes_or_str, bytes):
         value = bytes_or_str.decode("utf-8")
