@@ -93,17 +93,21 @@ def names_to_data(
     name_to_section_and_option: dict[str, tuple[str, str]],
 ) -> dict[str, str]:
     """
-    ini_parser: a configparser.ConfigParser() instance.
+    Retrieves data from a configparser.ConfigParser instance based
+    on the provided section and option names.
 
-    name_to_section_and_option: a dictionary where the keys are
-    names, and the values are each tuples that contain the corresponding
-    section and option.
+    Args:
+        ini_parser:
+        An instance of configparser.ConfigParser that contains the
+        configuration data.
 
-    Extracts configuration data from ini_parser by iterating through
-    the name_to_section_and_option dictionary.
+        name_to_section_and_option:
+        A dictionary mapping names to tuples of section and option
+        names.
 
-    Returns a dictionary where the keys are the names and the values
-    are the corresponding data.
+    Returns:
+        A dictionary mapping names to the corresponding data retrieved
+        from the configparser.ConfigParser instance.
     """
     if not isinstance(ini_parser, configparser.ConfigParser):
         raise TypeError("Expected configparser.ConfigParser instance.")
