@@ -314,10 +314,34 @@ def validate_ips(
     version: str | int = "any",
 ) -> bool:
     """
-    Iterates through a list of IPs and validates them the way
-    validate_ip does.
+    Validates a list of potential IP addresses/networks.
 
-    On success, simply returns True.
+    Args:
+        potential_ips:
+        A list of potential IPs to be validated.
+
+        type_of_ip:
+        The type of IP to validate. Can be one of these:
+        - "address" (default)
+        - "network"
+        - "any"
+
+        version:
+        The IP version to validate. Can be one of these:
+        - 4
+        - 6
+        - "any" (default)
+
+    Returns:
+        bool:
+        True if all IP addresses are valid.
+
+    Raises:
+        TypeError:
+        If the 'potential_ips' argument is not a list.
+
+        ValueError:
+        If the 'potential_ips' argument is an empty list.
     """
     if not isinstance(potential_ips, list):
         raise TypeError(
