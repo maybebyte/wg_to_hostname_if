@@ -215,7 +215,7 @@ def transform_wg_data(
     new_config_data["endpoint"] = endpoint
     new_config_data["allowed_ips"] = extract_ips(
         allowed_ips,
-        type_of_ip="network",
+        type_of_ip="any",
     )
     new_config_data["address"] = extract_ips(address)
 
@@ -468,7 +468,7 @@ def validate_wg_data(transformed_wg_data: dict) -> bool:
     validate_wg_key(transformed_wg_data["private_key"], key_name="PrivateKey")
     validate_wg_key(transformed_wg_data["public_key"], key_name="PublicKey")
 
-    validate_ips(transformed_wg_data["allowed_ips"], type_of_ip="network")
+    validate_ips(transformed_wg_data["allowed_ips"], type_of_ip="any")
     validate_ips(transformed_wg_data["address"])
 
     endpoint_ip, endpoint_port = transformed_wg_data["endpoint"]
