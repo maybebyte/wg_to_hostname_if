@@ -60,9 +60,19 @@ def to_bytes(bytes_or_str: str | bytes) -> bytes:
 
 def split_and_strip(string: str, separator: str) -> list[str]:
     """
-    Given a string to split and a separator, return the list of
-    strings that would be given by str.split(), except that each
-    string in the list is stripped of leading and trailing whitespace.
+    Splits a given string into substrings using the specified
+    separator and returns a list of substrings that are stripped
+    of whitespace.
+
+    Args:
+        string:
+        The string to be split.
+
+        separator:
+        The separator used to split the string into substrings.
+
+    Returns:
+        A list of substrings stripped of whitespace.
     """
     return [
         substring.strip() for substring in string.split(separator)
