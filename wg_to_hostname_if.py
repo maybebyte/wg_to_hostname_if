@@ -213,13 +213,25 @@ def validate_network_port(port: int) -> int:
 
 def validate_wg_key(key: str | bytes, key_name: str = "Key") -> bool:
     """
-    Validate the provided WireGuard key.
+    Validates a WireGuard key by performing the following checks:
+    1. Converts the key to bytes if it is a string.
+    2. Decodes the key from base64 and performs validation.
+    3. Checks if the decoded key is exactly 32 bytes long.
 
-    Validation consists of these steps:
-    - base64 decode the key.
-    - check if its decoded length is 32 bytes.
+    Args:
+        key:
+        The WireGuard key to validate. It can be either a string
+        or bytes.
 
-    Raises a ValueError if the length check fails.
+        key_name:
+        The name of the key being validated. Defaults to "Key".
+
+    Returns:
+        bool: True if the key is valid, False otherwise.
+
+    Raises:
+        ValueError:
+        If the key doesn't base64 decode to exactly 32 bytes.
     """
     key_as_bytes = to_bytes(key)
     b64decoded_key = b64decode(key_as_bytes, validate=True)
