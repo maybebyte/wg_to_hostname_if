@@ -244,21 +244,43 @@ def validate_ip(
     potential_ip: str, type_of_ip: str = "address", version: str | int = "any"
 ) -> ipaddress.IPv4Interface | ipaddress.IPv6Interface:
     """
-    Given a potential IP, validate it.
+    Validates an IP address or network based on the specified
+    parameters.
 
-    If type_of_ip is provided, validate_ip will only consider a
-    particular kind of IP valid. Types include:
+    Args:
+        potential_ip:
+        The IP address or network to be validated.
 
-    "address": An IP address. The default.
-    "network": A network range.
-    "any": Either.
+        type_of_ip:
+        The type of IP to validate. Can be one of these:
+        - "address" (default)
+        - "network"
+        - "any"
 
-    If version is provided, validate_ip will only consider a
-    particular IP version valid. Versions include:
+        version:
+        The IP version to validate. Can be one of these:
+        - 4
+        - 6
+        - "any" (default)
 
-    4: IPv4.
-    6: IPv6.
-    "any": Either. The default.
+    Returns:
+        ipaddress.IPv4Interface | ipaddress.IPv6Interface:
+        The validated IP address or network.
+
+    Raises:
+        ValueError:
+        - If type_of_ip is not an allowed type.
+        - If version is not an allowed version.
+
+        ipaddress.AddressValueError:
+        - If the IP address or network doesn't match the specified
+        version.
+
+        - If the IP address is a network and type_of_ip was set to
+        "address".
+
+        - If the IP address is an IP and type_of_ip was set to
+        "network".
     """
     if type_of_ip not in ("address", "network", "any"):
         raise ValueError('type_of_ip must be "address", "network", or "any"')
