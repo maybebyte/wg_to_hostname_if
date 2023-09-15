@@ -157,19 +157,51 @@ def transform_wg_data(
     wg_config_data: dict[str, str],
 ) -> dict:
     """
-    Receives a dictionary containing lowercase names of WireGuard
-    INI options as the keys and their associated data as the values.
+    Transforms WireGuard configuration data into a new format.
 
-    Performs processing on them such that the values for these names
-    become updated with the following:
+    Args:
+        wg_config_data:
+        A dictionary containing WireGuard configuration data.
 
-    "endpoint": list containing an IP address and a network port
-    "allowed_ips": list containing IP networks/addresses allowed by the
-    server
-    "address": list containing interface addresses
+        The dictionary must have the following keys:
 
-    Returns a dictionary using the same key names, but with updated
-    data.
+        - "private_key":
+        The private key for the WireGuard connection.
+
+        - "public_key":
+        The public key for the WireGuard connection.
+
+        - "endpoint":
+        The endpoint for the WireGuard connection, in the format
+        "host:port".
+
+        - "allowed_ips":
+        A comma-separated string of allowed IP addresses or networks.
+
+        - "address":
+        A comma-separated string of IP addresses assigned to the
+        WireGuard interface.
+
+    Returns:
+        A dictionary containing the transformed WireGuard configuration
+        data.
+
+        The dictionary will have the same keys as before, but these
+        keys will have updated values:
+
+        - "endpoint":
+        A list containing the host and port of the WireGuard endpoint.
+
+        - "allowed_ips":
+        A list of IP addresses or networks allowed by the WireGuard
+        connection.
+
+        - "address":
+        A list of IP addresses assigned to the WireGuard interface.
+
+    Raises:
+        KeyError:
+        If any of the required keys weren't in the provided dictionary.
     """
     endpoint = split_and_strip(wg_config_data["endpoint"], ":")
     allowed_ips = split_and_strip(wg_config_data["allowed_ips"], ",")
