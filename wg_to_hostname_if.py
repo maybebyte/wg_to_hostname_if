@@ -89,9 +89,7 @@ def split_and_strip(string: str, separator: str) -> list[str]:
     Returns:
         A list of substrings stripped of whitespace.
     """
-    return [
-        substring.strip() for substring in string.split(separator)
-    ]
+    return [substring.strip() for substring in string.split(separator)]
 
 
 def init_ini_parser(
@@ -524,10 +522,7 @@ Translates a WireGuard configuration file to OpenBSD's hostname.if(5) format.
 
     # Accept 0 here. `wgrtable 0` may sometimes be needed when the
     # default rtable isn't 0, see login.conf(5).
-    if (
-        arguments.WGRTABLE is not None
-        and not 0 <= arguments.WGRTABLE <= 255
-    ):
+    if arguments.WGRTABLE is not None and not 0 <= arguments.WGRTABLE <= 255:
         print("wgrtable must be from 0-255.", file=sys.stderr)
         sys.exit(1)
 
