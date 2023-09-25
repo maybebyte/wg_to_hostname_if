@@ -465,12 +465,12 @@ def convert_wg_to_hostname_if(transformed_wg_data: dict) -> list[str]:
 
     for ip_addr in transformed_wg_data["address"]:
         if ip_addr.version == 4:
-            ifconfig_arg = "inet"
+            inet_version = "inet"
         elif ip_addr.version == 6:
-            ifconfig_arg = "inet6"
+            inet_version = "inet6"
         else:
             raise ipaddress.AddressValueError
-        hostname_if_lines.append(f"{ifconfig_arg} {ip_addr}")
+        hostname_if_lines.append(f"{inet_version} {ip_addr}")
 
     return hostname_if_lines
 
