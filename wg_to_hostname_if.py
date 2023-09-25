@@ -340,56 +340,6 @@ def validate_ip(
     return validated_ip
 
 
-def validate_ips(
-    potential_ips: list,
-    type_of_ip: str = "address",
-    version: str | int = "any",
-) -> bool:
-    """
-    Validates a list of potential IP addresses/networks.
-
-    Args:
-        potential_ips:
-        A list of potential IPs to be validated.
-
-        type_of_ip:
-        The type of IP to validate. Can be one of these:
-        - "address" (default)
-        - "network"
-        - "any"
-
-        version:
-        The IP version to validate. Can be one of these:
-        - 4
-        - 6
-        - "any" (default)
-
-    Returns:
-        bool:
-        True if all IP addresses are valid.
-
-    Raises:
-        TypeError:
-        If the 'potential_ips' argument is not a list.
-
-        ValueError:
-        If the 'potential_ips' argument is an empty list.
-    """
-    if not isinstance(potential_ips, list):
-        raise TypeError(
-            "validate_ips: 'potential_ips' argument accepts a list."
-        )
-
-    if not potential_ips:
-        raise ValueError(
-            "validate_ips: 'potential_ips' argument needs a non-empty list."
-        )
-
-    for ip in potential_ips:
-        validate_ip(ip, type_of_ip, version)
-    return True
-
-
 def extract_ips(
     potential_ips: list[str],
     type_of_ip: str = "address",
@@ -468,8 +418,11 @@ def validate_wg_data(transformed_wg_data: dict) -> bool:
     validate_wg_key(transformed_wg_data["private_key"], key_name="PrivateKey")
     validate_wg_key(transformed_wg_data["public_key"], key_name="PublicKey")
 
-    validate_ips(transformed_wg_data["allowed_ips"], type_of_ip="any")
-    validate_ips(transformed_wg_data["address"])
+    for potential_ip in transformed_wg_data["allowed_ips"]:
+        validate_ip(potential_ip, type_of_ip="any")
+
+    for potential_ip in transformed_wg_data["address"]:
+        validate_ip(potential_ip)
 
     endpoint_ip, endpoint_port = transformed_wg_data["endpoint"]
     validate_ip(endpoint_ip)
