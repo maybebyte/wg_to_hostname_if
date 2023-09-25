@@ -455,9 +455,10 @@ def convert_wg_to_hostname_if(transformed_wg_data: dict) -> list[str]:
         "\t" + f'wgendpoint {" ".join(transformed_wg_data["endpoint"])} \\'
     )
 
+    index_of_last_allowed_ip = len(transformed_wg_data["allowed_ips"]) - 1
     for i, allowed_ip in enumerate(transformed_wg_data["allowed_ips"]):
         line_ending = " \\"
-        if i == len(transformed_wg_data["allowed_ips"]) - 1:
+        if i == index_of_last_allowed_ip:
             line_ending = ""
 
         hostname_if_lines.append("\t" + f"wgaip {allowed_ip}{line_ending}")
