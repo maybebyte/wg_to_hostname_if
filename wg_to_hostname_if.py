@@ -42,8 +42,7 @@ def to_str(bytes_or_str: str | bytes) -> str:
 
     Args:
         bytes_or_str:
-        The input to be converted. It can be either a bytes object
-        or a string.
+        The input to be converted.
 
     Returns:
         The converted string.
@@ -61,7 +60,7 @@ def to_bytes(bytes_or_str: str | bytes) -> bytes:
 
     Args:
         bytes_or_str:
-        The input string or bytes object to be converted.
+        The input to be converted.
 
     Returns:
         The converted bytes object.
