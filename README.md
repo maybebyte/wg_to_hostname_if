@@ -59,7 +59,7 @@ $ mandoc -l docs/wg_to_hostname_if.1
 
 There is also a generated Markdown file in the same directory so
 you can [read the man page on
-GitHub](https://github.com/3uryd1ce/wg_to_hostname_if/blob/main/docs/wg_to_hostname_if.md).
+GitHub](https://github.com/maybebyte/wg_to_hostname_if/blob/main/docs/wg_to_hostname_if.md).
 
 ## TODOs
 
