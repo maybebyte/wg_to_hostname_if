@@ -380,6 +380,11 @@ def extract_ips(
     for potential_ip in potential_ips:
         try:
             valid_ip = validate_ip(potential_ip, type_of_ip, version)
+        # Ignoring these exceptions is alright because we never append to
+        # the list of IPs that extract_ips() returns. In this situation,
+        # we don't want to terminate the whole program if the IP we're on
+        # failed the validation checks. Instead, we want to ignore that IP
+        # and keep checking for more valid IPs in the list we were provided.
         except ipaddress.AddressValueError:
             continue
         except ValueError:
